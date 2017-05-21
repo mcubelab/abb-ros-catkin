@@ -7,7 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   geometry_msgs
   message_generation
-  matVec
+  matvec
 )
 
 add_message_files(DIRECTORY msg FILES

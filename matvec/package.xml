@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>matVec</name>
+  <name>matvec</name>
   <version>0.0.0</version>
-  <description>matVec</description>
+  <description>matvec</description>
 
   <maintainer email="robbie@robbie.robbie">Robbie Paolini</maintainer>
 

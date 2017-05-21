@@ -8,7 +8,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sys/types.h> 
-#include <matVec/matVec.h>
+#include <matvec/matVec.h>
 #include <math.h>
 
 #include "ABBInterpreter.h"

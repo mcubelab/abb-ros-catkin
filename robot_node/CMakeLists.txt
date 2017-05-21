@@ -7,7 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   geometry_msgs
   robot_comm
-  matVec
+  matvec
 )
 
 catkin_package()

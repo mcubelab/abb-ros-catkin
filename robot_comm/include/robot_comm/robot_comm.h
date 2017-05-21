@@ -2,7 +2,7 @@
 #define ROBOT_COMM_H
 
 #include <ros/ros.h>
-#include <matVec/matVec.h>
+#include <matvec/matvec.h>
 #include <geometry_msgs/Pose.h>
 
 #include <robot_comm/robot_Ping.h>
