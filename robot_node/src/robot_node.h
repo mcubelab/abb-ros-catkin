@@ -58,6 +58,7 @@ pthread_mutex_t cartUpdateMutex;
 pthread_mutex_t forceUpdateMutex;
 pthread_mutex_t sendRecvMutex;
 
+#include <robot_comm/robot_IOSignal.h>
 #define SERVICE_CALLBACK_DEC(X) bool robot_##X(robot_comm::robot_##X::Request& req, robot_comm::robot_##X::Response& res);
 
 class RobotController
@@ -109,6 +110,8 @@ class RobotController
   SERVICE_CALLBACK_DEC(DeactivateCSS)
   
   SERVICE_CALLBACK_DEC(ActivateEGM)
+  
+  SERVICE_CALLBACK_DEC(IOSignal)
 
   // Advertise Services and Topics
   void advertiseServices();
@@ -231,6 +234,7 @@ class RobotController
   ros::ServiceServer handle_robot_DeactivateCSS;
   ros::ServiceServer handle_robot_ActivateEGM;
   ros::ServiceServer handle_robot_SetMotionSupervision;
+  ros::ServiceServer handle_robot_IOSignal;
  
   // Helper function for communicating with robot server
   bool sendAndReceive(char *message, int messageLength, 
@@ -259,10 +263,12 @@ class RobotController
   bool deactCSS(geometry_msgs::Pose pose);
   //EGM
   bool actEGM(robot_comm::robot_ActivateEGM::Request& req);
+  //signal
+  bool iosignal(int output_num, int signal);
   
   // Check if robot is currently moving or not
   bool is_moving();
-
+  
   // Functions to handle setting up non-blocking step sizes
   bool setTrackDist(double pos_dist, double ang_dist);
   bool setNonBlockSpeed(double tcp, double ori);

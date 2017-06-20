@@ -49,6 +49,7 @@ add_service_files(DIRECTORY srv FILES
     robot_SetWorkObject.srv
     robot_SetZone.srv
     robot_Stop.srv
+    robot_IOSignal.srv
 )
 
 

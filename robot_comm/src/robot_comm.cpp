@@ -63,6 +63,8 @@ void RobotComm::subscribe(ros::NodeHandle* np)
     np->serviceClient<robot_comm::robot_Approach>(robotname + "_Approach");
   handle_robot_ActivateEGM =
     np->serviceClient<robot_comm::robot_ActivateEGM>(robotname + "_ActivateEGM");
+  handle_robot_IOSignal =
+    np->serviceClient<robot_comm::robot_IOSignal>(robotname + "_IOSignal");
 }
 
 void RobotComm::subscribeCartesian(ros::NodeHandle* np, int q_len, 
@@ -109,6 +111,7 @@ void RobotComm::shutdown()
   handle_robot_GetFK.shutdown();
   handle_robot_Approach.shutdown();
   handle_robot_ActivateEGM.shutdown();
+  handle_robot_IOSignal.shutdown();
 }
 
 bool RobotComm::Ping()
@@ -277,7 +280,14 @@ bool RobotComm::SetAcc(const double acc, const double deacc)
 {
   robot_SetAcc_srv.request.acc = acc;
   robot_SetAcc_srv.request.deacc = deacc;
-  return handle_robot_SetSpeed.call(robot_SetAcc_srv);  
+  return handle_robot_SetAcc.call(robot_SetAcc_srv);  
+}
+
+bool RobotComm::IOSignal(const int output_num, const int signal)
+{
+  robot_IOSignal_srv.request.output_num = output_num;
+  robot_IOSignal_srv.request.signal = signal;
+  return handle_robot_IOSignal.call(robot_IOSignal_srv);  
 }
 
 bool RobotComm::SetTrackDist(const double pos_dist, const double ang_dist)

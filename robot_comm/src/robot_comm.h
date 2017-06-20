@@ -44,6 +44,8 @@
 
 #include <robot_comm/robot_ActivateEGM.h>
 
+#include <robot_comm/robot_IOSignal.h>
+
 #include <geometry_msgs/Pose.h>
 
 #define NUM_JOINTS 6
@@ -119,6 +121,7 @@ class RobotComm
     bool SetWorkObject(const double x, const double y, const double z, 
         const double q0, const double qx, const double qy, const double qz);
     bool SetZone(const int z);
+    bool IOSignal(const int output_num, const int signal);
     bool SetMotionSupervision(double sup);
     bool SetTool(const double x, const double y, const double z, 
         const double q0, const double qx, const double qy, const double qz);
@@ -215,6 +218,7 @@ class RobotComm
     ros::ServiceClient handle_robot_ClearBuffer;
     
     ros::ServiceClient handle_robot_ActivateEGM;
+    ros::ServiceClient handle_robot_IOSignal;
 
     // ROS services
     robot_comm::robot_Ping robot_Ping_srv;
@@ -249,6 +253,8 @@ class RobotComm
     robot_comm::robot_ClearBuffer robot_ClearBuffer_srv;
     
     robot_comm::robot_ActivateEGM robot_ActivateEGM_srv;
+    
+    robot_comm::robot_IOSignal robot_IOSignal_srv;
     
 };
 

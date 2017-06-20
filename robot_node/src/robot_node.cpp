@@ -54,6 +54,8 @@ RobotController::~RobotController() {
   handle_robot_RRIJointState.shutdown();
   handle_robot_RRICartState.shutdown();
   
+  handle_robot_IOSignal.shutdown();
+  
   char message[MAX_BUFFER];
   
   //Close RRI connections
@@ -292,6 +294,9 @@ void RobotController::advertiseServices()
   
   // EGM
   INIT_HANDLE(ActivateEGM)
+  
+  // IOSignal
+  INIT_HANDLE(IOSignal)
 }
 
 // helper function
@@ -1448,7 +1453,20 @@ bool RobotController::actEGM(robot_comm::robot_ActivateEGM::Request& req)
   SEND_MSG_TO_ROBOT_AND_END
 }
 
-
+//////////////////////////////////////////////////////////////////////////////
+// IOSignal
+//////////////////////////////////////////////////////////////////////////////
+SERVICE_CALLBACK_DEF(IOSignal)
+{
+  return RUN_AND_RETURN_RESULT(iosignal(req.output_num, req.signal), res.ret, res.msg, "ROBOT_CONTROLLER: Not able to set signals.");
+}
+bool RobotController::iosignal(int output_num, int signal)
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::iosignal(output_num, signal, 
+                                     randNumber).c_str());
+  SEND_MSG_TO_ROBOT_AND_END
+}
 //////////////////////////////////////////////////////////////////////////////
 // Connect to Servers on Robot
 //////////////////////////////////////////////////////////////////////////////

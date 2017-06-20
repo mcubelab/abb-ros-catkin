@@ -50,6 +50,8 @@ namespace ABBInterpreter
   // EGM
   string actEGM(int idCode=0);
   
+  string iosignal(int output_num, int signal, int idCode=0);
+  
   int parseCartesian(string msg, double *x, double *y, double *z,
       double *q0, double *qx, double *qy, double *qz);
   int parseJoints(string msg, double *joint1, double *joint2, 

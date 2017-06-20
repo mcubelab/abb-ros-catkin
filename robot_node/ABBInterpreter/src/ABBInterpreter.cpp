@@ -365,6 +365,18 @@ string ABBInterpreter::actEGM(int idCode)
   return stringFromInstructionCode(70,idCode);
 }
 
+// outputNum: 1, 2, 3, 4
+// iosignal: 0, 1
+string ABBInterpreter::iosignal(int outputNum, int signal, int idCode)
+{
+  stringstream ss;
+  ss << "10 " //instruction code;
+     << idCode << " " << outputNum << " " << signal << " #";
+
+  return ss.str();
+}
+
+
 /**
   * Formats message to close the connection with the server in the ABB robot.
   * @param idCode User code identifying the message. Will be sent back with the acknowledgement.
