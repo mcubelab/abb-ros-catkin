@@ -39,3 +39,10 @@ rosservice call /robot1_ExecuteBuffer  # go through the whole trajectory
 ```
 Note: Too small spacing between points may cause jerky motions. Try SetZone to higher value.
 
+Set 24V IO signals:
+------
+```
+rosservice call /robot1_IOSignal [output_num] [signal]  # output_num = 1,2,3,4; #signal 1:on 0:off
+rosservice call /robot1_IOSignal 1 1  # signal output channel 1 to on
+rosservice call /robot1_IOSignal 1 0  # signal output channel 1 to off
+```
