@@ -1,0 +1,50 @@
+#
+# Generated backup file, do not edit.
+#
+# Originally at: /hd0a/TEMP/backup.080166
+# 2017-07-18  18:08:44
+#
+>>SYSTEM_ID:
+12-02362
+
+>>PRODUCTS_ID:
+RobotWare Version: 6.04.00.01
+
+  RobotWare Base
+  709-1 DeviceNet Master/Slave
+  608-1 World Zones
+  613-1 Collision Detection
+  614-1 FTP and NFS client
+  616-1 PC Interface
+  617-1 FlexPendant Interface
+  689-1 Externally Guided Motion (EGM)
+  English
+  Auto acknowledge input
+  623-1 Multitasking
+  IRB 120T-3/0.6
+  Axis Calibration
+  Drive System IRB 120/140/260/360/910SC/1200/1400/1520/1600/1660ID IRC5 Compact
+
+>>HOME:
+All public files and directories
+
+>>SYSPAR:
+SYS.cfg
+PROC.cfg
+MMC.cfg
+EIO.cfg
+SIO.cfg
+MOC.cfg
+
+
+>>TASK1: (T_ROB1,,)
+SYSMOD/user.sys @ 
+PROGMOD/SERVER.mod @ 
+SYSMOD/LINKEDM.sys @ HIDDEN
+
+>>TASK2: (LOGGER,,)
+SYSMOD/user.sys @ 
+PROGMOD/LOGGER.mod @ 
+
+
+>>EOF:

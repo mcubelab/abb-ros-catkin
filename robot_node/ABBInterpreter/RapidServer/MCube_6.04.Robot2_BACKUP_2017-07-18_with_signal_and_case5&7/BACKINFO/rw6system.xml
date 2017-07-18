@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<system creation-date="2017-05-02 10:19:54" desc=" " enable="False" id="284D00D9-395C-445A-ABC2-BC8FC62F8CD6" last-modified-date="" name="MCube_6.04.Robot2"><applications><application name="RobotWare" version="6.04.0140"><settings><setting-file path="/hd0a/MCube_6.04.Robot2/INTERNAL/controller.rsf" /><system-xml path="/hd0a/MCube_6.04.Robot2/system.xml" /><key-id path="/hd0a/MCube_6.04.Robot2/INTERNAL/key.id" /></settings></application></applications></system>
