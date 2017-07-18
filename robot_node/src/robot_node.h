@@ -21,6 +21,7 @@
 #include <robot_comm/robot_comm.h>
 #include <sensor_msgs/JointState.h>
 #include <geometry_msgs/Pose.h>
+#include <std_msgs/Bool.h>
 
 //#define MAX_BUFFER 256
 #define MAX_BUFFER 10000
@@ -203,6 +204,7 @@ class RobotController
   ros::Publisher handle_robot_ForceLog;
   ros::Publisher handle_robot_RRICartState;
   ros::Publisher handle_robot_RRIJointState;
+  ros::Publisher handle_robot_SuctionState;
   ros::ServiceServer handle_robot_Ping;
   ros::ServiceServer handle_robot_SetCartesian;
   ros::ServiceServer handle_robot_SetCartesianJ;

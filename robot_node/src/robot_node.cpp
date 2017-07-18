@@ -250,6 +250,7 @@ void RobotController::advertiseTopics()
   handle_robot_CartesianLog = node->advertise<robot_comm::robot_CartesianLog>(robotname + "_CartesianLog", 100);
   handle_robot_JointsLog = node->advertise<robot_comm::robot_JointsLog>(robotname + "_JointsLog", 100);
   handle_robot_ForceLog =  node->advertise<robot_comm::robot_ForceLog>(robotname + "_ForceLog", 100);
+  handle_robot_SuctionState =  node->advertise<std_msgs::Bool>(robotname + "_SuctionState", 100);
   handle_robot_RRIJointState =  node->advertise<sensor_msgs::JointState>(robotname + "_RRIJointState", 100);
   handle_robot_RRICartState =  node->advertise<sensor_msgs::JointState>(robotname + "_RRICartState", 100);
 }
@@ -1724,9 +1725,11 @@ void RobotController::logCallback(const ros::TimerEvent&)
   bool cartesianModif = false;
   bool jointsModif = false;
   bool forceModif = false;
+  bool suctionModif = false;
   robot_comm::robot_JointsLog msgJoints;
   robot_comm::robot_CartesianLog msgCartesian;
   robot_comm::robot_ForceLog msgForce;
+  std_msgs::Bool msgSuction;
 
   // Read all information from the tcp/ip socket
   if ((t=recv(robotLoggerSocket, buffer, MAX_BUFFER-1, 0)) > 0)
@@ -1818,6 +1821,27 @@ void RobotController::logCallback(const ros::TimerEvent&)
             }
             break;
           }
+          
+        // Suction on off message
+        case 3:
+          {
+            char date[MAX_BUFFER];
+            char time[MAX_BUFFER];
+            int on;
+            int nParams = sscanf(partialBuffer,"# %*d %s %s %d",
+                date,
+                time,
+                &on);
+            msgSuction.data = on;
+            if (nParams == 3)
+            {
+              // If we read in the correct number of parameters, save this message.
+              msgForce.date.assign(date);
+              msgForce.time.assign(time);
+              suctionModif = true;
+            }
+            break;
+          }
       }
       // Increment partialBuffer, so we don't look at the same message again
       partialBuffer++;
@@ -1846,6 +1870,10 @@ void RobotController::logCallback(const ros::TimerEvent&)
       pthread_mutex_lock(&forceUpdateMutex);
       setArrayFromScalars(curForce, msgForce.fx, msgForce.fy, msgForce.fz, msgForce.tx, msgForce.ty, msgForce.tz);
       pthread_mutex_unlock(&forceUpdateMutex);
+    }
+    if(suctionModif)
+    {
+      handle_robot_SuctionState.publish(msgSuction);
     }
     
     //prepare joint state message
