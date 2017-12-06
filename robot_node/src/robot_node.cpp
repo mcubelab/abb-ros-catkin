@@ -304,6 +304,8 @@ void RobotController::advertiseServices()
 template<typename T1, typename T>
 void setArrayFromScalars(T1& a, T x0,T x1,T x2,T x3,T x4,T x5){  a[0] = x0;   a[1] = x1;  a[2] = x2;  a[3] = x3;  a[4] = x4;  a[5] = x5; }
 template<typename T1, typename T>
+void setArrayFromScalars(T1& a, T x0,T x1,T x2,T x3,T x4,T x5,T x6){  a[0] = x0;   a[1] = x1;  a[2] = x2;  a[3] = x3;  a[4] = x4;  a[5] = x5; a[6] = x6; }
+template<typename T1, typename T>
 void setArrayFromScalars(T1& a, T x0,T x1,T x2,T x3){  a[0] = x0;  a[1] = x1;  a[2] = x2; a[3] = x3; }
 template<typename T1, typename T>
 void setArrayFromScalars(T1& a, T x0,T x1,T x2){  a[0] = x0;  a[1] = x1;  a[2] = x2; }
@@ -312,6 +314,8 @@ void setArrayFromScalars(T1& a, T x0,T x1){ a[0] = x0;  a[1] = x1; }
 
 template<typename T1, typename T>
 void setScalarsFromArray(T& x0,T& x1,T& x2,T& x3,T& x4,T& x5,T1 a){  x0=a[0]; x1=a[1]; x2=a[2]; x3=a[3]; x4=a[4]; x5=a[5]; }
+template<typename T1, typename T>
+void setScalarsFromArray(T& x0,T& x1,T& x2,T& x3,T& x4,T& x5,T& x6,T1 a){  x0=a[0]; x1=a[1]; x2=a[2]; x3=a[3]; x4=a[4]; x5=a[5]; x5=a[6]; }
 template<typename T1, typename T>
 void setScalarsFromArray(T& x0,T& x1,T& x2,T& x3,T1 a){  x0=a[0]; x1=a[1]; x2=a[2];  x3=a[3];}
 template<typename T1, typename T>
@@ -526,11 +530,11 @@ SERVICE_CALLBACK_DEF(SetJoints)
       cart_move = false;
       
       // Our new target is just the goal specified by the user
-      setArrayFromScalars(curTargJ, req.j1, req.j2, req.j3, req.j4, req.j5, req.j6);
+      setArrayFromScalars(curTargJ, req.j1, req.j2, req.j3, req.j4, req.j5, req.j6, req.j7);
 
       // Our previous goal is simply the current position
       getJoints(curGoalJ[0], curGoalJ[1], curGoalJ[2], 
-          curGoalJ[3], curGoalJ[4], curGoalJ[5]);
+          curGoalJ[3], curGoalJ[4], curGoalJ[5], curGoalJ[6]);
 
       // Now that we have set everything up, execute the move
       do_nb_move = true;
@@ -539,7 +543,7 @@ SERVICE_CALLBACK_DEF(SetJoints)
     {
       // Otherwise, we are currently doing a joint move, and we need to update
       // our target position
-      setArrayFromScalars(curTargJ, req.j1, req.j2, req.j3, req.j4, req.j5, req.j6);
+      setArrayFromScalars(curTargJ, req.j1, req.j2, req.j3, req.j4, req.j5, req.j6, req.j7);
 
       // Remember that we changed our position, again to make sure we don't
       // have unexpected results
@@ -559,7 +563,7 @@ SERVICE_CALLBACK_DEF(SetJoints)
   else
   {
     // If we are in blocking mode, simply execute the entire joint move
-    if (!setJoints(req.j1, req.j2, req.j3, req.j4, req.j5, req.j6))
+    if (!setJoints(req.j1, req.j2, req.j3, req.j4, req.j5, req.j6, req.j7))
     {
       //res.ret = 0;
       res.ret = errorId;
@@ -577,7 +581,7 @@ SERVICE_CALLBACK_DEF(SetJoints)
 // Query the robot for the current position of its joints
 SERVICE_CALLBACK_DEF(GetJoints)
 {
-  return RUN_AND_RETURN_RESULT(getJoints(res.j1, res.j2, res.j3, res.j4, res.j5, res.j6), 
+  return RUN_AND_RETURN_RESULT(getJoints(res.j1, res.j2, res.j3, res.j4, res.j5, res.j6, res.j7), 
          res.ret, res.msg, "ROBOT_CONTROLLER: Not able to get Joint coordinates of the robot.");
 }
 
@@ -592,7 +596,7 @@ SERVICE_CALLBACK_DEF(GetIK)
 
   if (sendAndReceive(message, strlen(message), reply, randNumber))
   {
-    ABBInterpreter::parseJoints(reply, &res.j1, &res.j2, &res.j3, &res.j4, &res.j5, &res.j6);
+    ABBInterpreter::parseJoints(reply, &res.j1, &res.j2, &res.j3, &res.j4, &res.j5, &res.j6, &res.j7);
     res.ret = 1;
     res.msg = "ROBOT_CONTROLLER: OK.";
     return true;
@@ -615,7 +619,7 @@ char message[MAX_BUFFER];
   int randNumber = (int)(ID_CODE_MAX*(double)rand()/(double)(RAND_MAX));
 
   strcpy(message, ABBInterpreter::getFK(req.j1, req.j2, req.j3, 
-        req.j4, req.j5, req.j6, randNumber).c_str());
+        req.j4, req.j5, req.j6, req.j7, randNumber).c_str());
 
   if (sendAndReceive(message, strlen(message), reply, randNumber))
   {
@@ -928,7 +932,7 @@ SERVICE_CALLBACK_DEF(ClearBuffer)
 // Joint position buffer commands
 SERVICE_CALLBACK_DEF(AddJointPosBuffer)
 {
-  return RUN_AND_RETURN_RESULT(addJointPosBuffer(req.j1, req.j2, req.j3, req.j4, req.j5, req.j6), res.ret, res.msg, "Not able to add joint position buffer");
+  return RUN_AND_RETURN_RESULT(addJointPosBuffer(req.j1, req.j2, req.j3, req.j4, req.j5, req.j6, req.j7), res.ret, res.msg, "Not able to add joint position buffer");
       
 }
 
@@ -1041,19 +1045,19 @@ bool RobotController::getCartesian(double &x, double &y, double &z,
 
 // Command the robot to move to a given joint configuration
 bool RobotController::setJoints(double j1, double j2, double j3, double j4,
-    double j5, double j6)
+    double j5, double j6, double j7)
 {
   // We will do some collision and sanity checks here
 
   PREPARE_TO_TALK_TO_ROBOT
 
-  strcpy(message, ABBInterpreter::setJoints(j1, j2, j3, j4, j5, j6, 
+  strcpy(message, ABBInterpreter::setJoints(j1, j2, j3, j4, j5, j6, j7,
         randNumber).c_str());
 
   if (sendAndReceive(message, strlen(message), reply, randNumber))
   {
     // If the move was successful, keep track of the last commanded position
-    setArrayFromScalars(curGoalJ, j1,j2,j3,j4,j5,j6);
+    setArrayFromScalars(curGoalJ, j1,j2,j3,j4,j5,j6,j7);
     return true;
   }
   else
@@ -1062,7 +1066,7 @@ bool RobotController::setJoints(double j1, double j2, double j3, double j4,
 
 // Query the robot for the current joint positions
 bool RobotController::getJoints(double &j1, double &j2, double &j3,
-    double &j4, double &j5, double &j6)
+    double &j4, double &j5, double &j6, double &j7)
 {
   PREPARE_TO_TALK_TO_ROBOT
   strcpy(message, ABBInterpreter::getJoints(randNumber).c_str());
@@ -1070,7 +1074,7 @@ bool RobotController::getJoints(double &j1, double &j2, double &j3,
   if(sendAndReceive(message, strlen(message), reply, randNumber))
   {
     // Parse the reply to get the joint angles
-    ABBInterpreter::parseJoints(reply, &j1, &j2, &j3, &j4, &j5, &j6);
+    ABBInterpreter::parseJoints(reply, &j1, &j2, &j3, &j4, &j5, &j6, &j7);
     return true;
   }
   else
@@ -1400,10 +1404,10 @@ bool RobotController::clearBuffer()
 }
 
 // Set adds joint positions 1 configuration at a time to the joint position buffer
-bool RobotController::addJointPosBuffer(double j1, double j2, double j3, double j4, double j5, double j6)
+bool RobotController::addJointPosBuffer(double j1, double j2, double j3, double j4, double j5, double j6, double j7)
 {
   PREPARE_TO_TALK_TO_ROBOT
-  strcpy(message, ABBInterpreter::addJointPosBuffer(j1, j2, j3, j4, j5, j6, randNumber).c_str());
+  strcpy(message, ABBInterpreter::addJointPosBuffer(j1, j2, j3, j4, j5, j6, j7, randNumber).c_str());
   SEND_MSG_TO_ROBOT_AND_END
 }
 
@@ -1777,7 +1781,7 @@ void RobotController::logCallback(const ros::TimerEvent&)
           {
             char date[MAX_BUFFER];
             char time[MAX_BUFFER];
-            int nParams = sscanf(partialBuffer,"# %*d %s %s %lf %lf %lf %lf %lf %lf %lf",
+            int nParams = sscanf(partialBuffer,"# %*d %s %s %lf %lf %lf %lf %lf %lf %lf %lf",
                 date,
                 time,
                 &msgJoints.timeStamp,
@@ -1786,7 +1790,8 @@ void RobotController::logCallback(const ros::TimerEvent&)
                 &msgJoints.j3,
                 &msgJoints.j4,
                 &msgJoints.j5,
-                &msgJoints.j6);
+                &msgJoints.j6,
+                &msgJoints.j7);
             if (nParams == 9)
             {
               // If we read in the correct number of parameters, save this message
@@ -1861,7 +1866,7 @@ void RobotController::logCallback(const ros::TimerEvent&)
     {
       handle_robot_JointsLog.publish(msgJoints);
       pthread_mutex_lock(&jointUpdateMutex);
-      setArrayFromScalars(curJ, msgJoints.j1, msgJoints.j2, msgJoints.j3, msgJoints.j4, msgJoints.j5, msgJoints.j6);
+      setArrayFromScalars(curJ, msgJoints.j1, msgJoints.j2, msgJoints.j3, msgJoints.j4, msgJoints.j5, msgJoints.j6, msgJoints.j7);
       pthread_mutex_unlock(&jointUpdateMutex);
     }
     if(forceModif)
@@ -1885,8 +1890,9 @@ void RobotController::logCallback(const ros::TimerEvent&)
       js.position.push_back(msgJoints.j4*DEG2RAD);
       js.position.push_back(msgJoints.j5*DEG2RAD);
       js.position.push_back(msgJoints.j6*DEG2RAD);
+      js.position.push_back(msgJoints.j7*DEG2RAD);
         
-      string J_names[] = {"joint1", "joint2", "joint3", "joint4", "joint5", "joint6"};
+      string J_names[] = {"joint1", "joint2", "joint3", "joint4", "joint5", "joint6", "joint7"};
       js.name.assign(J_names, J_names + 6);
       js.header.stamp = ros::Time::now();
       handle_robot_RosJointState.publish(js);
@@ -1948,8 +1954,8 @@ void RobotController::rriCallback(const ros::TimerEvent&)
           
         // For joints position
         TiXmlElement* Jact = element->FirstChildElement("J_act");
-        double J_act[6];  // J1, J2, J3, J4, J5, J6
-        string J_element_names[] = {"J1", "J2", "J3", "J4", "J5", "J6"};
+        double J_act[7];  // J1, J2, J3, J4, J5, J6, J7
+        string J_element_names[] = {"J1", "J2", "J3", "J4", "J5", "J6", "J7"};
         for (int i=0;i<NUM_JOINTS;i++)
           Jact->QueryDoubleAttribute( J_element_names[i].c_str(), &J_act[i]);
           
@@ -1957,7 +1963,7 @@ void RobotController::rriCallback(const ros::TimerEvent&)
         for (int i=0;i<NUM_JOINTS;i++)
           js.position.push_back(J_act[i]);
           
-        string J_names[] = {"joint1", "joint2", "joint3", "joint4", "joint5", "joint6"};
+        string J_names[] = {"joint1", "joint2", "joint3", "joint4", "joint5", "joint6", "joint7"};
         js.name.assign(J_names, J_names + NUM_JOINTS);
         handle_robot_RRIJointState.publish(js);
       }
@@ -2252,7 +2258,7 @@ void *nonBlockMain(void *args)
 
         // Now do the joint move towards our new goal
         if (!robot->setJoints(newGoalJ[0], newGoalJ[1], newGoalJ[2],
-              newGoalJ[3], newGoalJ[4], newGoalJ[5]))
+              newGoalJ[3], newGoalJ[4], newGoalJ[5], newGoalJ[6]))
         {
           ROS_INFO("Non-Blocking move error!");
           pthread_mutex_lock (&nonBlockMutex);

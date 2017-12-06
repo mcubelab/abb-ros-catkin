@@ -161,10 +161,10 @@ class RobotController
   bool setCartesian(double x, double y, double z, 
     double q0, double qx, double qy, double qz);
   bool setJoints(double j1, double j2, double j3, 
-      double j4, double j5, double j6);
+      double j4, double j5, double j6, double j7);
       
   // Buffer Commands for joint positions
-  bool addJointPosBuffer(double j1, double j2, double j3, double j4, double j5, double j6);
+  bool addJointPosBuffer(double j1, double j2, double j3, double j4, double j5, double j6, double j7);
   bool executeJointPosBuffer();
   bool clearJointPosBuffer();
   
@@ -247,7 +247,7 @@ class RobotController
   bool getCartesian(double &x, double &y, double &z, 
       double &q0, double &qx, double &qy, double &qz);
   bool getJoints(double &j1, double &j2, double &j3,
-      double &j4, double &j5, double &j6);
+      double &j4, double &j5, double &j6, double &j7);
   bool setTool(double x, double y, double z, 
     double q0, double qx, double qy, double qz);
   bool setInertia(double m, double cgx, double cgy, 

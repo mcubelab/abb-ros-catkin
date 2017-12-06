@@ -189,7 +189,7 @@ bool RobotComm::SetCartesianJ(const HomogTransf pose)
   return SetCartesianJ(trans[0],trans[1],trans[2],quat[0],quat[1],quat[2],quat[3]);
 }
 
-bool RobotComm::SetJoints(const double j[6])
+bool RobotComm::SetJoints(const double j[7])
 {
   robot_SetJoints_srv.request.j1 = j[0];
   robot_SetJoints_srv.request.j2 = j[1];
@@ -197,11 +197,12 @@ bool RobotComm::SetJoints(const double j[6])
   robot_SetJoints_srv.request.j4 = j[3];
   robot_SetJoints_srv.request.j5 = j[4];
   robot_SetJoints_srv.request.j6 = j[5];
+  robot_SetJoints_srv.request.j7 = j[6];
 	return handle_robot_SetJoints.call(robot_SetJoints_srv);
 }
 
 bool RobotComm::SetJoints(const double j1, const double j2, const double j3, 
-    const double j4, const double j5, const double j6)
+    const double j4, const double j5, const double j6,  const double j7)
 {
   robot_SetJoints_srv.request.j1 = j1;
   robot_SetJoints_srv.request.j2 = j2;
@@ -209,6 +210,7 @@ bool RobotComm::SetJoints(const double j1, const double j2, const double j3,
   robot_SetJoints_srv.request.j4 = j4;
   robot_SetJoints_srv.request.j5 = j5;
   robot_SetJoints_srv.request.j6 = j6;
+  robot_SetJoints_srv.request.j7 = j7;
 	return handle_robot_SetJoints.call(robot_SetJoints_srv);
 }
 
@@ -508,7 +510,7 @@ bool RobotComm::GetCartesian(double &x, double &y, double &z,
 }
 
 bool RobotComm::GetJoints(double &j1, double &j2, double &j3, 
-    double &j4, double &j5, double &j6)
+    double &j4, double &j5, double &j6, double &j7)
 {
   if (handle_robot_GetJoints.call(robot_GetJoints_srv))
   {
@@ -518,6 +520,7 @@ bool RobotComm::GetJoints(double &j1, double &j2, double &j3,
     j4 = robot_GetJoints_srv.response.j4;
     j5 = robot_GetJoints_srv.response.j5;
     j6 = robot_GetJoints_srv.response.j6;
+    j7 = robot_GetJoints_srv.response.j7;
     return true;
   }
   else
@@ -534,6 +537,7 @@ bool RobotComm::GetJoints(double j[NUM_JOINTS])
     j[3] = robot_GetJoints_srv.response.j4;
     j[4] = robot_GetJoints_srv.response.j5;
     j[5] = robot_GetJoints_srv.response.j6;
+    j[6] = robot_GetJoints_srv.response.j7;
     return true;
   }
   else
@@ -561,7 +565,7 @@ bool RobotComm::GetIK(const HomogTransf pose, double joints[NUM_JOINTS])
     joints[3] = robot_GetIK_srv.response.j4;
     joints[4] = robot_GetIK_srv.response.j5;
     joints[5] = robot_GetIK_srv.response.j6;
-
+    joints[6] = robot_GetIK_srv.response.j7;
     return true;
   }
   return false;
@@ -575,6 +579,7 @@ bool RobotComm::GetFK(const double joints[NUM_JOINTS], HomogTransf &pose)
   robot_GetFK_srv.request.j4 = joints[3];
   robot_GetFK_srv.request.j5 = joints[4];
   robot_GetFK_srv.request.j6 = joints[5];
+  robot_GetFK_srv.request.j7 = joints[6];
   if (handle_robot_GetFK.call(robot_GetFK_srv))
   {
     double p[7];
@@ -605,7 +610,7 @@ bool RobotComm::moveArm(geometry_msgs::Pose pose)
 
 bool RobotComm::moveArm(double j[NUM_JOINTS])
 {
-  RobotComm::SetJoints(j[0],j[1],j[2],j[3],j[4],j[5]);
+  RobotComm::SetJoints(j[0],j[1],j[2],j[3],j[4],j[5],j[6]);
 
   return true;
 }
@@ -638,7 +643,7 @@ bool RobotComm::relativeMoveArm(double x_off, double y_off, double z_off,
 
 bool RobotComm::invertHand(void)
 {
-  RobotComm::SetJoints(0.0,0.0,0.0,0.0,-90.0,0.0);
+  RobotComm::SetJoints(0.0,0.0,0.0,0.0,-90.0,0.0,0.0);
 
   return true;
 }
@@ -653,7 +658,7 @@ bool RobotComm::moveToTop(void)
 
 bool RobotComm::moveReset(void)
 {
-  RobotComm::SetJoints(0.0,0.0,0.0,0.0,0.0,0.0);
+  RobotComm::SetJoints(0.0,0.0,0.0,0.0,0.0,0.0,0.0);
 
   return true;
 }
@@ -664,7 +669,7 @@ bool RobotComm::setupRobot(double tcp, double ori, int zone,
   RobotComm::SetSpeed(tcp, ori);
   RobotComm::SetZone(zone);
   RobotComm::SetJoints(joints);
-  RobotComm::SetJoints(0.0, 0.0, 0.0, 0.0, 90, 0.0);
+  RobotComm::SetJoints(0.0, 0.0, 0.0, 0.0, 90, 0.0, 0.0);
   //RobotComm::moveArm(pose);
 
   return true;

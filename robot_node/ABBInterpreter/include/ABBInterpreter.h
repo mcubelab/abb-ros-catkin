@@ -17,9 +17,9 @@ namespace ABBInterpreter
   string pingRobot(int idCode=0);
   string setCartesian(double x, double y, double z, double q0, double qx, double qy, double qz, int idCode=0);
   string setCartesianJ(double x, double y, double z, double q0, double qx, double qy, double qz, int idCode=0);
-  string setJoints(double joint1, double joint2, double joint3, double joint4, double joint5, double joint6, int idCode=0);
+  string setJoints(double joint1, double joint2, double joint3, double joint4, double joint5, double joint6, double joint7, int idCode=0);
   string getIK(double x, double y, double z, double q0, double qx, double qy, double qz, int idCode=0);
-  string getFK(double j1, double j2, double j3, double j4, double j5, double j6, int idCode=0);
+  string getFK(double j1, double j2, double j3, double j4, double j5, double j6, double joint7, int idCode=0);
   string getCartesian(int idCode=0);
   string getJoints(int idCode=0);
   string setTool(double x, double y, double z, double q0, double qx, double qy, double qz, int idCode=0);
@@ -37,7 +37,7 @@ namespace ABBInterpreter
   string executeBuffer(int idCode=0);
   string lenBuffer(int idCode=0);
   // Joint Configuration
-  string addJointPosBuffer(double q1, double q2, double q3, double q4, double q5, double q6, int idCode=0);
+  string addJointPosBuffer(double q1, double q2, double q3, double q4, double q5, double q6, double q7, int idCode=0);
   string clearJointPosBuffer(int idCode=0);
   string executeJointPosBuffer(int idCode=0);
   // RRI
@@ -55,6 +55,6 @@ namespace ABBInterpreter
   int parseCartesian(string msg, double *x, double *y, double *z,
       double *q0, double *qx, double *qy, double *qz);
   int parseJoints(string msg, double *joint1, double *joint2, 
-      double *joint3, double *joint4, double *joint5, double *joint6);  
+      double *joint3, double *joint4, double *joint5, double *joint6, double *joint7);  
 }
 #endif
