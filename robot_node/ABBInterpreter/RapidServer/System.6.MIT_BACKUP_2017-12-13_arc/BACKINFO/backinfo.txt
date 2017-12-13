@@ -1,0 +1,61 @@
+#
+# Generated backup file, do not edit.
+#
+# Originally at: /hd0a/TEMP/backup.898587
+# 2017-12-13  07:22:06
+#
+>>SYSTEM_ID:
+INTERNAL_USE
+
+>>PRODUCTS_ID:
+RobotWare Version: 6.03.00.00
+
+  RobotWare Base
+  687-1 Advanced Robot Motion
+  624-1 Continuous Application Platform
+  613-1 Collision Detection
+  709-1 DeviceNet Master/Slave
+  841-1 EtherNet/IP Scanner/Adapter
+  689-1 Externally Guided Motion (EGM)
+  617-1 FlexPendant Interface
+  614-1 FTP and NFS client
+  623-1 Multitasking
+  612-1 Path Offset
+  611-1 Path Recovery
+  616-1 PC Interface
+  688-1 RobotStudio App Connect
+  885-1 SoftMove
+  608-1 World Zones
+  English
+  IRB 1600ID-4/1.5
+  Drive System IRB 120/140/260/360/910SC/1200/1400/1520/1600 IRC5 Compact
+
+>>HOME:
+All public files and directories
+
+>>SYSPAR:
+SYS.cfg
+PROC.cfg
+MMC.cfg
+EIO.cfg
+SIO.cfg
+MOC.cfg
+
+
+>>TASK1: (T_ROB1,,)
+SYSMOD/user.sys @ 
+PROGMOD/SERVER.mod @ 
+SYSMOD/LINKEDM.sys @ HIDDEN
+PROGMOD/Module1.mod @ 
+PROGMOD/TCP_toolTest1.mod @ 
+
+>>TASK2: (LOGGER1,,)
+SYSMOD/user.sys @ 
+PROGMOD/LOGGER.mod @ 
+
+>>TASK3: (INIT,,)
+SYSMOD/user.sys @ 
+PROGMOD/INIT.mod @ 
+
+
+>>EOF:
