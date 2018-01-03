@@ -267,7 +267,7 @@ string ABBInterpreter::executeBuffer(int idCode)
 string ABBInterpreter::addJointPosBuffer(double q1, double q2, double q3, double q4, double q5, double q6, double q7, int idCode)
 {
   string msg = stringFromInstructionCodeNoEnding(37,idCode);
-  sprintf(buff,"%+08.2lf %+08.2lf %+08.2lf %+08.2lf %+08.2lf %+08.2lf %+08.2lf",q1,q2,q3,q4,q5,q6,q7);  msg += buff ;
+  sprintf(buff,"%+08.2lf %+08.2lf %+08.2lf %+08.2lf %+08.2lf %+08.2lf %+08.2lf ",q1,q2,q3,q4,q5,q6,q7);  msg += buff ;
   return (msg+"#");
 }
         
