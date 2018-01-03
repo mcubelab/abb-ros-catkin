@@ -80,6 +80,7 @@ add_dependencies(robot_comm robot_comm_generate_messages_cpp)
 
 ## Mark executables and/or libraries for installation
 install(TARGETS robot_comm
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
 

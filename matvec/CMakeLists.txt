@@ -28,6 +28,7 @@ add_library(matvec src/HomogTransf.cpp
                             src/RotMat.cpp
                             src/Vec.cpp)
 
+find_package(catkin)
 catkin_package(
    INCLUDE_DIRS include
    LIBRARIES matvec
@@ -37,7 +38,9 @@ catkin_package(
 
 ## Mark executables and/or libraries for installation
 install(TARGETS matvec
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 ## Mark cpp header files for installation
