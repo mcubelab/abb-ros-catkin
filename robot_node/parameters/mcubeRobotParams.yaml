@@ -24,4 +24,4 @@ robot2: {speedORI: 10.0, speedTCP: 50.0, toolQ0: 1.0,
   
   accelerationStart: 28, accelerationEnd: 28, 
   
-  zone: 1, robotIp: 192.168.125.1, robotLoggerPort: 5003, robotMotionPort: 5002, hostRRIPort: 13001, vacuum: 0, supervision: 90, }
+  zone: 1, robotIp: 192.168.125.1, robotLoggerPort: 5003, robotMotionPort: 5002, hostRRIPort: 13001, vacuum: 0, supervision: 90}

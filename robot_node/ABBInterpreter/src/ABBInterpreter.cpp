@@ -99,7 +99,7 @@ string ABBInterpreter::getIK(double x, double y, double z, double q0, double qx,
 string ABBInterpreter::getFK(double joint1, double joint2, double joint3, double joint4, double joint5, double joint6, double joint7, int idCode)
 {
   string msg = stringFromInstructionCodeNoEnding(13,idCode);
-  sprintf(buff,"%+08.2lf %+08.2lf %+08.2lf %+08.2lf %+08.2lf %+08.2lf ",joint1,joint2,joint3,joint4,joint5,joint6);  msg += buff ;
+  sprintf(buff,"%+08.2lf %+08.2lf %+08.2lf %+08.2lf %+08.2lf %+08.2lf %+08.2lf ",joint1,joint2,joint3,joint4,joint5,joint6,joint7);  msg += buff ;
   return (msg+"#");
 }
 
@@ -267,7 +267,7 @@ string ABBInterpreter::executeBuffer(int idCode)
 string ABBInterpreter::addJointPosBuffer(double q1, double q2, double q3, double q4, double q5, double q6, double q7, int idCode)
 {
   string msg = stringFromInstructionCodeNoEnding(37,idCode);
-  sprintf(buff,"%+08.2lf %+08.2lf %+08.2lf %+08.2lf %+08.2lf %+08.2lf ",q1,q2,q3,q4,q5,q6);  msg += buff ;
+  sprintf(buff,"%+08.2lf %+08.2lf %+08.2lf %+08.2lf %+08.2lf %+08.2lf %+08.2lf ",q1,q2,q3,q4,q5,q6,q7);  msg += buff ;
   return (msg+"#");
 }
         
@@ -426,7 +426,7 @@ int ABBInterpreter::parseJoints(std::string msg,  double *joint1,
     double *joint5, double *joint6, double *joint7)
 {
   int ok, idCode;
-  sscanf(msg.c_str(),"%*d %d %d %*f %lf %lf %lf %lf %lf %lf",&idCode,&ok,joint1,joint2,joint3,joint4,joint5,joint6);
+  sscanf(msg.c_str(),"%*d %d %d %*f %lf %lf %lf %lf %lf %lf %lf",&idCode,&ok,joint1,joint2,joint3,joint4,joint5,joint6,joint7);
   if (ok)
     return idCode;
   else

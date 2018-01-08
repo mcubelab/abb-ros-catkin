@@ -46,7 +46,7 @@
 
 #include <geometry_msgs/Pose.h>
 
-#define NUM_JOINTS 6
+#define NUM_JOINTS 7
 #define NUM_FORCES 6
 
 #define BLOCKING 1
@@ -115,7 +115,7 @@ class RobotComm
         const double q0, const double qx, const double qy, const double qz);
     bool SetJoints(const double j[NUM_JOINTS]); 
     bool SetJoints(const double j1, const double j2, const double j3, 
-        const double j4, const double j5, const double j6);
+        const double j4, const double j5, const double j6, const double j7);
     bool SetWorkObject(const double x, const double y, const double z, 
         const double q0, const double qx, const double qy, const double qz);
     bool SetZone(const int z);
@@ -146,10 +146,10 @@ class RobotComm
         double &q0, double &qx, double &qy, double &qz);
     bool GetJoints(double j[NUM_JOINTS]); 
     bool GetJoints(double &j1, double &j2, double &j3, 
-        double &j4, double &j5, double &j6); 
+        double &j4, double &j5, double &j6, double &j7); 
     bool IsMoving();
     
-    bool AddJointPosBuffer(double j1, double j2, double j3, double j4, double j5, double j6);
+    bool AddJointPosBuffer(double j1, double j2, double j3, double j4, double j5, double j6, double j7);
     bool ExecuteJointPosBuffer();
     bool ClearJointPosBuffer();
     bool AddBuffer(double x, double y, double z, double q0, double qx, double qy, double qz);
