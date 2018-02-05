@@ -1,0 +1,66 @@
+#
+# Generated backup file, do not edit.
+#
+# Originally at: /hd0a/TEMP/backup.863490
+# 2018-02-06  04:17:08
+#
+>>SYSTEM_ID:
+14000-500575
+
+>>PRODUCTS_ID:
+RobotWare Version: 6.03.02.00
+SmartGripperV3 Version: 3.10.1
+
+  RobotWare Base
+  709-1 DeviceNet Master/Slave
+  840-1 EtherNet/IP Anybus Adapter
+  603-1 Absolute Accuracy
+  614-1 FTP and NFS client
+  617-1 FlexPendant Interface
+  637-1 Production Screen
+  Contact L
+  623-1 Multitasking
+  604-1 MultiMove Coordinated
+  608-1 World Zones
+  611-1 Path Recovery
+  612-1 Path Offset
+  613-1 Collision Detection
+  841-1 EtherNet/IP Scanner/Adapter
+  1341-1/1520-1 Integrated Vision Interface
+  988-1 RW Add-In Prepared
+  688-1 RobotStudio App Connect
+  616-1 PC Interface
+  Motor Commutation
+  Service Info System
+  Pendelum Calibration
+  Drive System IRB 14000
+  Hall Sensor Calibration
+  IRB 14000-0.5/0.5
+  SmartGripperV3.1
+
+>>HOME:
+All public files and directories
+
+>>SYSPAR:
+SYS.cfg
+PROC.cfg
+MMC.cfg
+EIO.cfg
+SIO.cfg
+MOC.cfg
+
+
+>>TASK1: (T_ROB_R,,)
+SYSMOD/user.sys @ 
+PROGMOD/SERVER.mod @ 
+SYSMOD/ProdScr.sys @ 
+SYSMOD/LINKEDM.sys @ HIDDEN
+
+>>TASK2: (T_ROB_L,NewProgramName,)
+SYSMOD/user.sys @ 
+PROGMOD/SERVER.mod @ 
+SYSMOD/ProdScr.sys @ 
+SYSMOD/LINKEDM.sys @ HIDDEN
+
+
+>>EOF:
