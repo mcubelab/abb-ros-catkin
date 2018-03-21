@@ -60,14 +60,36 @@ string ABBInterpreter::setCartesian(double x, double y, double z, double q0, dou
   * @param qx Second component of the orientation quaternion.
   * @param qy Third component of the orientation quaternion.
   * @param qz Fourth component of the orientation quaternion.
+  * @param ang Set the robot angle
   * @param idCode User code identifying the message. Will be sent back with the acknowledgement.
   * @return String to be sent to ABB server.
   */
-string ABBInterpreter::setCartesianJ(double x, double y, double z, double q0, double qx, double qy, double qz, int idCode)
+string ABBInterpreter::setCartesianJ(double x, double y, double z, double q0, double qx, double qy, double qz, double ang, int idCode)
 {
   string msg = stringFromInstructionCodeNoEnding(1,idCode);
-  sprintf(buff,"%+08.1lf %+08.1lf %+08.1lf %+08.5lf %+08.5lf %+08.5lf %+08.5lf ",x,y,z,q0,qx,qy,qz);  msg += buff ;
+  sprintf(buff,"%+08.1lf %+08.1lf %+08.1lf %+08.5lf %+08.5lf %+08.5lf %+08.5lf %+08.5lf ",x,y,z,q0,qx,qy,qz,ang);  msg += buff ;
   msg += "j #";
+  return (msg);
+}
+
+/**
+  * Formats message to set the cartesian coordinates of the ABB robot
+  * The coordinates are always with respect to the currently defined work object and tool.
+  * @param x X-coordinate of the robot.
+  * @param y Y-coordinate of the robot.
+  * @param z Z-coordinate of the robot.
+  * @param q0 First component of the orientation quaternion.
+  * @param qx Second component of the orientation quaternion.
+  * @param qy Third component of the orientation quaternion.
+  * @param qz Fourth component of the orientation quaternion.
+  * @param ang Set the robot angle
+  * @param idCode User code identifying the message. Will be sent back with the acknowledgement.
+  * @return String to be sent to ABB server.
+  */
+string ABBInterpreter::setCartesianA(double x, double y, double z, double q0, double qx, double qy, double qz, double ang, int idCode)
+{
+  string msg = stringFromInstructionCodeNoEnding(1,idCode);
+  sprintf(buff,"%+08.1lf %+08.1lf %+08.1lf %+08.5lf %+08.5lf %+08.5lf %+08.5lf %+08.5lf ",x,y,z,q0,qx,qy,qz,ang);  msg += buff ;
   return (msg);
 }
 

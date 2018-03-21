@@ -25,6 +25,7 @@ RobotController::~RobotController() {
   handle_robot_Ping.shutdown();
   handle_robot_SetCartesian.shutdown();
   handle_robot_SetCartesianJ.shutdown();
+  handle_robot_SetCartesianA.shutdown();
   handle_robot_GetCartesian.shutdown();
   handle_robot_SetJoints.shutdown();
   handle_robot_GetJoints.shutdown();
@@ -262,6 +263,7 @@ void RobotController::advertiseServices()
   INIT_HANDLE(Ping)
   INIT_HANDLE(SetCartesian)
   INIT_HANDLE(SetCartesianJ)
+  INIT_HANDLE(SetCartesianA)
   INIT_HANDLE(GetCartesian)
   INIT_HANDLE(SetJoints)
   INIT_HANDLE(GetJoints)
@@ -415,7 +417,76 @@ SERVICE_CALLBACK_DEF(SetCartesianJ)
   else
   {
     // If we are in blocking mode, simply execute the cartesian move
-    if (!setCartesianJ(req.x, req.y, req.z, req.q0, req.qx, req.qy, req.qz))
+    if (!setCartesianJ(req.x, req.y, req.z, req.q0, req.qx, req.qy, req.qz, req.ang))
+    {
+      res.ret = 0;
+      res.msg = "ROBOT_CONTROLLER: Not able to set cartesian coordinates ";
+      res.msg += "of the robot.";
+      return false;
+    }
+  }
+
+  res.ret = 1;
+  res.msg = "ROBOT_CONTROLLER: OK.";
+  return true;
+}
+
+// Moves the robot to a given cartesian position. If we are currently in
+// non-blocking mode, then we simply setup the move and let the non-blocking
+// thread handle the actual moving. If we are in blocking mode, we then 
+// communicate with the robot to execute the move.
+SERVICE_CALLBACK_DEF(SetCartesianA)
+{
+  // If we are in non-blocking mode
+  if (non_blocking)
+  {
+    // As we are changing some state variables, mutex this block to be sure
+    // we don't get unpredictable actions
+    pthread_mutex_lock(&nonBlockMutex);
+    if (!do_nb_move)
+    {
+      // If no move is currently being executed, we will now be doing
+      // a cartesian move.
+      cart_move = true;
+      cart_move_a = true;
+
+      // Our new target is simply the target passed by the user
+      setArrayFromScalars(curTargP, req.x, req.y, req.z);
+      setArrayFromScalars(curTargQ, req.q0, req.qx, req.qy, req.qz);
+
+      // The last goal in the non-blocking move is simply the current position
+      getCartesian(curGoalP[0], curGoalP[1], curGoalP[2],
+          curGoalQ[0], curGoalQ[1], curGoalQ[2], curGoalQ[3]);
+
+      // We are now ready to execute this non-blocking move
+      do_nb_move = true;
+    }
+    else if (cart_move)
+    {
+      cart_move_a = true;
+      // If we are currently doing a non-blocking cartesian move, we simply
+      // need to update our current target
+      setArrayFromScalars(curTargP, req.x, req.y, req.z);
+      setArrayFromScalars(curTargQ, req.q0, req.qx, req.qy, req.qz);
+
+      // Remember that we changed our target, again to maintain concurrency
+      targetChanged = true;
+    }
+    else
+    {
+      // If we are doing a non-blocking move, but it's a joint move,
+      // it would be much too dangerous to switch
+      res.ret = 0;
+      res.msg = "ROBOT_CONTROLLER: Can't do a cartesian move while doing a ";
+      res.msg += "non-blocking joint move!";
+      return false;
+    }
+    pthread_mutex_unlock(&nonBlockMutex);
+  }
+  else
+  {
+    // If we are in blocking mode, simply execute the cartesian move
+    if (!setCartesianA(req.x, req.y, req.z, req.q0, req.qx, req.qy, req.qz, req.ang))
     {
       res.ret = 0;
       res.msg = "ROBOT_CONTROLLER: Not able to set cartesian coordinates ";
@@ -1006,11 +1077,32 @@ bool RobotController::setCartesian(double x, double y, double z,
 // Command the robot to move to a given cartesian position using a joint
 // move
 bool RobotController::setCartesianJ(double x, double y, double z, 
-    double q0, double qx, double qy, double qz)
+    double q0, double qx, double qy, double qz, double ang)
 {
   PREPARE_TO_TALK_TO_ROBOT
 
-  strcpy(message, ABBInterpreter::setCartesianJ(x, y, z, q0, qx, qy, qz, 
+  strcpy(message, ABBInterpreter::setCartesianJ(x, y, z, q0, qx, qy, qz, ang,
+        randNumber).c_str());
+
+  if (sendAndReceive(message, strlen(message), reply, randNumber))
+  {
+    // If this was successful, keep track of the last commanded position
+    setArrayFromScalars(curGoalP, x,y,z);
+    setArrayFromScalars(curGoalQ, q0,qx,qy,qz);
+    return true;
+  }
+  else
+    return false;
+}
+
+// Command the robot to move to a given cartesian position using a joint
+// move
+bool RobotController::setCartesianA(double x, double y, double z,
+    double q0, double qx, double qy, double qz, double ang)
+{
+  PREPARE_TO_TALK_TO_ROBOT
+
+  strcpy(message, ABBInterpreter::setCartesianA(x, y, z, q0, qx, qy, qz, ang,
         randNumber).c_str());
 
   if (sendAndReceive(message, strlen(message), reply, randNumber))

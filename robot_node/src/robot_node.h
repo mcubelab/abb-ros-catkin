@@ -76,6 +76,7 @@ class RobotController
   // Service Callbacks
   SERVICE_CALLBACK_DEC(Ping)
   SERVICE_CALLBACK_DEC(SetDefaults)
+  SERVICE_CALLBACK_DEC(SetCartesianA)
   SERVICE_CALLBACK_DEC(SetCartesianJ)
   SERVICE_CALLBACK_DEC(SetCartesian)
   SERVICE_CALLBACK_DEC(GetCartesian)
@@ -156,8 +157,10 @@ class RobotController
   char errorReply[MAX_BUFFER];
   
   // Move commands are public so that the non-blocking thread can use it
+  bool setCartesianA(double x, double y, double z,
+    double q0, double qx, double qy, double qz, double ang);
   bool setCartesianJ(double x, double y, double z, 
-    double q0, double qx, double qy, double qz);
+    double q0, double qx, double qy, double qz, double ang);
   bool setCartesian(double x, double y, double z, 
     double q0, double qx, double qy, double qz);
   bool setJoints(double j1, double j2, double j3, 
@@ -208,6 +211,7 @@ class RobotController
   ros::ServiceServer handle_robot_Ping;
   ros::ServiceServer handle_robot_SetCartesian;
   ros::ServiceServer handle_robot_SetCartesianJ;
+  ros::ServiceServer handle_robot_SetCartesianA;
   ros::ServiceServer handle_robot_GetCartesian;
   ros::ServiceServer handle_robot_SetJoints;
   ros::ServiceServer handle_robot_GetJoints;

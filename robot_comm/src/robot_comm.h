@@ -8,6 +8,7 @@
 #include <robot_comm/robot_Ping.h>
 #include <robot_comm/robot_SetCartesian.h>
 #include <robot_comm/robot_SetCartesianJ.h>
+#include <robot_comm/robot_SetCartesianA.h>
 #include <robot_comm/robot_GetCartesian.h>
 #include <robot_comm/robot_SetWorkObject.h>
 #include <robot_comm/robot_SetZone.h>
@@ -111,10 +112,14 @@ class RobotComm
         const double q0, const double qx, const double qy, const double qz);
     bool SetCartesian(const HomogTransf pose);
     bool SetCartesian(const double cart[7]);
-    bool SetCartesianJ(const HomogTransf pose);
-    bool SetCartesianJ(const double cart[7]);
+    bool SetCartesianJ(const HomogTransf pose, const double ang);
+    bool SetCartesianJ(const double cart[8]);
     bool SetCartesianJ(const double x, const double y, const double z, 
-        const double q0, const double qx, const double qy, const double qz);
+        const double q0, const double qx, const double qy, const double qz, const double ang);
+    bool SetCartesianA(const HomogTransf pose, const double ang);
+    bool SetCartesianA(const double cart[8]);
+    bool SetCartesianA(const double x, const double y, const double z,
+        const double q0, const double qx, const double qy, const double qz, const double ang);
     bool SetJoints(const double j[NUM_JOINTS]); 
     bool SetJoints(const double j1, const double j2, const double j3, 
         const double j4, const double j5, const double j6, const double j7);
@@ -190,6 +195,7 @@ class RobotComm
     ros::ServiceClient handle_robot_Ping;
     ros::ServiceClient handle_robot_SetCartesian;
     ros::ServiceClient handle_robot_SetCartesianJ;
+    ros::ServiceClient handle_robot_SetCartesianA;
     ros::ServiceClient handle_robot_GetCartesian;
     ros::ServiceClient handle_robot_SetWorkObject;
     ros::ServiceClient handle_robot_SetZone;
@@ -224,6 +230,7 @@ class RobotComm
     robot_comm::robot_Ping robot_Ping_srv;
     robot_comm::robot_SetCartesian robot_SetCartesian_srv;
     robot_comm::robot_SetCartesianJ robot_SetCartesianJ_srv;
+    robot_comm::robot_SetCartesianJ robot_SetCartesianA_srv;
     robot_comm::robot_GetCartesian robot_GetCartesian_srv;
     robot_comm::robot_SetWorkObject robot_SetWorkObject_srv;
     robot_comm::robot_SetZone robot_SetZone_srv;
