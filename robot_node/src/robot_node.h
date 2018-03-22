@@ -163,7 +163,7 @@ class RobotController
   bool setCartesianA(double x, double y, double z,
     double q0, double qx, double qy, double qz, double ang);
   bool setCartesianJ(double x, double y, double z, 
-    double q0, double qx, double qy, double qz, double ang);
+    double q0, double qx, double qy, double qz);
   bool setCartesian(double x, double y, double z, 
     double q0, double qx, double qy, double qz);
   bool setJoints(double j1, double j2, double j3, 

@@ -386,7 +386,6 @@ SERVICE_CALLBACK_DEF(SetCartesianJ)
       // Our new target is simply the target passed by the user
       setArrayFromScalars(curTargP, req.x, req.y, req.z);
       setArrayFromScalars(curTargQ, req.q0, req.qx, req.qy, req.qz);
-      curTargAng = req.ang;
 
       // The last goal in the non-blocking move is simply the current position
       getCartesian(curGoalP[0], curGoalP[1], curGoalP[2],
@@ -402,7 +401,6 @@ SERVICE_CALLBACK_DEF(SetCartesianJ)
       // need to update our current target
       setArrayFromScalars(curTargP, req.x, req.y, req.z);
       setArrayFromScalars(curTargQ, req.q0, req.qx, req.qy, req.qz);
-      curTargAng = req.ang;
       
       // Remember that we changed our target, again to maintain concurrency
       targetChanged = true;
@@ -421,7 +419,7 @@ SERVICE_CALLBACK_DEF(SetCartesianJ)
   else
   {
     // If we are in blocking mode, simply execute the cartesian move
-    if (!setCartesianJ(req.x, req.y, req.z, req.q0, req.qx, req.qy, req.qz, req.ang))
+    if (!setCartesianJ(req.x, req.y, req.z, req.q0, req.qx, req.qy, req.qz))
     {
       res.ret = 0;
       res.msg = "ROBOT_CONTROLLER: Not able to set cartesian coordinates ";
@@ -1083,11 +1081,11 @@ bool RobotController::setCartesian(double x, double y, double z,
 // Command the robot to move to a given cartesian position using a joint
 // move
 bool RobotController::setCartesianJ(double x, double y, double z, 
-    double q0, double qx, double qy, double qz, double ang)
+    double q0, double qx, double qy, double qz)
 {
   PREPARE_TO_TALK_TO_ROBOT
 
-  strcpy(message, ABBInterpreter::setCartesianJ(x, y, z, q0, qx, qy, qz, ang,
+  strcpy(message, ABBInterpreter::setCartesianJ(x, y, z, q0, qx, qy, qz,
         randNumber).c_str());
 
   if (sendAndReceive(message, strlen(message), reply, randNumber))
@@ -1095,7 +1093,6 @@ bool RobotController::setCartesianJ(double x, double y, double z,
     // If this was successful, keep track of the last commanded position
     setArrayFromScalars(curGoalP, x,y,z);
     setArrayFromScalars(curGoalQ, q0,qx,qy,qz);
-    curGoalAng = ang;
     return true;
   }
   else
@@ -2275,7 +2272,7 @@ void *nonBlockMain(void *args)
           // Now do the cartesian move towards our new goal
           //TODO need the angle 
           if (!robot->setCartesianJ(newGoalV[0], newGoalV[1], newGoalV[2],
-                newGoalQ[0], newGoalQ[1], newGoalQ[2], newGoalQ[3], robot->curGoalAng))
+                newGoalQ[0], newGoalQ[1], newGoalQ[2], newGoalQ[3]))
           {
             ROS_INFO("Non-Blocking move error!");
             pthread_mutex_lock (&nonBlockMutex);

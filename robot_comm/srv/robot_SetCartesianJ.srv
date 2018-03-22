@@ -6,7 +6,6 @@ float64 q0
 float64 qx
 float64 qy
 float64 qz
-float64 ang
 ---
 int64 ret
 string msg

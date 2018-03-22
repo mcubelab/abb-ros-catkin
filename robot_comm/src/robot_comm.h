@@ -112,10 +112,10 @@ class RobotComm
         const double q0, const double qx, const double qy, const double qz);
     bool SetCartesian(const HomogTransf pose);
     bool SetCartesian(const double cart[7]);
-    bool SetCartesianJ(const HomogTransf pose, const double ang);
-    bool SetCartesianJ(const double cart[8]);
+    bool SetCartesianJ(const HomogTransf pose);
+    bool SetCartesianJ(const double cart[7]);
     bool SetCartesianJ(const double x, const double y, const double z, 
-        const double q0, const double qx, const double qy, const double qz, const double ang);
+        const double q0, const double qx, const double qy, const double qz);
     bool SetCartesianA(const HomogTransf pose, const double ang);
     bool SetCartesianA(const double cart[8]);
     bool SetCartesianA(const double x, const double y, const double z,

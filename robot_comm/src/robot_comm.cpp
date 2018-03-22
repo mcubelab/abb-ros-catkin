@@ -161,7 +161,7 @@ bool RobotComm::SetCartesian(const HomogTransf pose)
 }
 
 bool RobotComm::SetCartesianJ(const double x, const double y, const double z, 
-    const double q0, const double qx, const double qy, const double qz, const double ang)
+    const double q0, const double qx, const double qy, const double qz)
 {
   robot_SetCartesianJ_srv.request.x = x;
 	robot_SetCartesianJ_srv.request.y = y;
@@ -170,11 +170,10 @@ bool RobotComm::SetCartesianJ(const double x, const double y, const double z,
 	robot_SetCartesianJ_srv.request.qx = qx;
 	robot_SetCartesianJ_srv.request.qy = qy;
 	robot_SetCartesianJ_srv.request.qz = qz;
-        robot_SetCartesianJ_srv.request.ang = ang;
 	return handle_robot_SetCartesianJ.call(robot_SetCartesianJ_srv);
 }
 
-bool RobotComm::SetCartesianJ(const double cart[8])
+bool RobotComm::SetCartesianJ(const double cart[7])
 {
   robot_SetCartesianJ_srv.request.x = cart[0];
 	robot_SetCartesianJ_srv.request.y = cart[1];
@@ -183,15 +182,14 @@ bool RobotComm::SetCartesianJ(const double cart[8])
 	robot_SetCartesianJ_srv.request.qx = cart[4];
 	robot_SetCartesianJ_srv.request.qy = cart[5];
 	robot_SetCartesianJ_srv.request.qz = cart[6];
-        robot_SetCartesianJ_srv.request.ang = cart[7];
 	return handle_robot_SetCartesianJ.call(robot_SetCartesianJ_srv);
 }
 
-bool RobotComm::SetCartesianJ(const HomogTransf pose, const double ang)
+bool RobotComm::SetCartesianJ(const HomogTransf pose)
 {
   Vec trans = pose.getTranslation();
   Quaternion quat = pose.getQuaternion();
-  return SetCartesianJ(trans[0],trans[1],trans[2],quat[0],quat[1],quat[2],quat[3],ang);
+  return SetCartesianJ(trans[0],trans[1],trans[2],quat[0],quat[1],quat[2],quat[3]);
 }
 
 bool RobotComm::SetCartesianA(const double x, const double y, const double z,
