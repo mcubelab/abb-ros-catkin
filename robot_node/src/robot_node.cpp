@@ -135,6 +135,8 @@ bool RobotController::init(std::string id)
   curP = Vec(3);
   curGoalP = Vec(3);
   curTargP = Vec(3);
+  curGoalAng = 0;
+  curTargAng = 0;
 
   // Set the Default Robot Configuration
   ROS_INFO("ROBOT_CONTROLLER: Setting robot default configuration...");
@@ -384,6 +386,7 @@ SERVICE_CALLBACK_DEF(SetCartesianJ)
       // Our new target is simply the target passed by the user
       setArrayFromScalars(curTargP, req.x, req.y, req.z);
       setArrayFromScalars(curTargQ, req.q0, req.qx, req.qy, req.qz);
+      curTargAng = req.ang;
 
       // The last goal in the non-blocking move is simply the current position
       getCartesian(curGoalP[0], curGoalP[1], curGoalP[2],
@@ -399,6 +402,7 @@ SERVICE_CALLBACK_DEF(SetCartesianJ)
       // need to update our current target
       setArrayFromScalars(curTargP, req.x, req.y, req.z);
       setArrayFromScalars(curTargQ, req.q0, req.qx, req.qy, req.qz);
+      curTargAng = req.ang;
       
       // Remember that we changed our target, again to maintain concurrency
       targetChanged = true;
@@ -453,6 +457,7 @@ SERVICE_CALLBACK_DEF(SetCartesianA)
       // Our new target is simply the target passed by the user
       setArrayFromScalars(curTargP, req.x, req.y, req.z);
       setArrayFromScalars(curTargQ, req.q0, req.qx, req.qy, req.qz);
+      curTargAng = req.ang;
 
       // The last goal in the non-blocking move is simply the current position
       getCartesian(curGoalP[0], curGoalP[1], curGoalP[2],
@@ -468,6 +473,7 @@ SERVICE_CALLBACK_DEF(SetCartesianA)
       // need to update our current target
       setArrayFromScalars(curTargP, req.x, req.y, req.z);
       setArrayFromScalars(curTargQ, req.q0, req.qx, req.qy, req.qz);
+      curTargAng = req.ang;
 
       // Remember that we changed our target, again to maintain concurrency
       targetChanged = true;
@@ -1089,6 +1095,7 @@ bool RobotController::setCartesianJ(double x, double y, double z,
     // If this was successful, keep track of the last commanded position
     setArrayFromScalars(curGoalP, x,y,z);
     setArrayFromScalars(curGoalQ, q0,qx,qy,qz);
+    curGoalAng = ang;
     return true;
   }
   else
@@ -1110,6 +1117,7 @@ bool RobotController::setCartesianA(double x, double y, double z,
     // If this was successful, keep track of the last commanded position
     setArrayFromScalars(curGoalP, x,y,z);
     setArrayFromScalars(curGoalQ, q0,qx,qy,qz);
+    curGoalAng = ang;
     return true;
   }
   else
@@ -2265,8 +2273,9 @@ void *nonBlockMain(void *args)
         if (robot->cart_move_j)
         {
           // Now do the cartesian move towards our new goal
+          //TODO need the angle 
           if (!robot->setCartesianJ(newGoalV[0], newGoalV[1], newGoalV[2],
-                newGoalQ[0], newGoalQ[1], newGoalQ[2], newGoalQ[3]))
+                newGoalQ[0], newGoalQ[1], newGoalQ[2], newGoalQ[3], robot->curGoalAng))
           {
             ROS_INFO("Non-Blocking move error!");
             pthread_mutex_lock (&nonBlockMutex);
@@ -2274,6 +2283,7 @@ void *nonBlockMain(void *args)
             pthread_mutex_unlock(&nonBlockMutex);
           }
         }
+        //TODO add elseif robot->cart_move_a
         else
         {
           // Now do the cartesian move towards our new goal

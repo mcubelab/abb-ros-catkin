@@ -23,8 +23,8 @@ void RobotComm::subscribe(ros::NodeHandle* np)
     np->serviceClient<robot_comm::robot_SetCartesian>(robotname + "_SetCartesian");
   handle_robot_SetCartesianJ = 
     np->serviceClient<robot_comm::robot_SetCartesianJ>(robotname + "_SetCartesianJ");
-  handle_robot_SetCartesianJ =
-    np->serviceClient<robot_comm::robot_SetCartesianJ>(robotname + "_SetCartesianA");
+  handle_robot_SetCartesianA =
+    np->serviceClient<robot_comm::robot_SetCartesianA>(robotname + "_SetCartesianA");
   handle_robot_GetCartesian = 
     np->serviceClient<robot_comm::robot_GetCartesian>(robotname + "_GetCartesian");
   handle_robot_SetWorkObject = 
@@ -225,7 +225,7 @@ bool RobotComm::SetCartesianA(const HomogTransf pose, const double ang)
 {
   Vec trans = pose.getTranslation();
   Quaternion quat = pose.getQuaternion();
-  return SetCartesianJ(trans[0],trans[1],trans[2],quat[0],quat[1],quat[2],quat[3],ang);
+  return SetCartesianA(trans[0],trans[1],trans[2],quat[0],quat[1],quat[2],quat[3],ang);
 }
 
 bool RobotComm::SetJoints(const double j[7])

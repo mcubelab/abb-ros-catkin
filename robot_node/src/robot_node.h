@@ -136,6 +136,7 @@ class RobotController
   bool stopConfirm;   // Set to true when the thread is sure it's stopped
   bool cart_move;     // True if we're doing a cartesian move, false if joint
   bool cart_move_j;     // True if we're doing a cartesian move, and we want the robot to use a joint move to do it, false if just a regular cartesian move
+  bool cart_move_a;
 
   // Variables dealing with changing non-blocking speed and step sizes
   bool changing_nb_speed; // Overrides setSpeed safety
@@ -146,9 +147,11 @@ class RobotController
 
   // Most recent goal position, and the final target position
   Vec curGoalP;
-  Quaternion curGoalQ;
   Vec curTargP;
+  Quaternion curGoalQ;
   Quaternion curTargQ;
+  double curGoalAng;
+  double curTargAng;
   double curGoalJ[NUM_JOINTS];
   double curTargJ[NUM_JOINTS];
 

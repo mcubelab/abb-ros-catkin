@@ -230,7 +230,7 @@ class RobotComm
     robot_comm::robot_Ping robot_Ping_srv;
     robot_comm::robot_SetCartesian robot_SetCartesian_srv;
     robot_comm::robot_SetCartesianJ robot_SetCartesianJ_srv;
-    robot_comm::robot_SetCartesianJ robot_SetCartesianA_srv;
+    robot_comm::robot_SetCartesianA robot_SetCartesianA_srv;
     robot_comm::robot_GetCartesian robot_GetCartesian_srv;
     robot_comm::robot_SetWorkObject robot_SetWorkObject_srv;
     robot_comm::robot_SetZone robot_SetZone_srv;
