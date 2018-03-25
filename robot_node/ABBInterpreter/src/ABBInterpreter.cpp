@@ -60,7 +60,6 @@ string ABBInterpreter::setCartesian(double x, double y, double z, double q0, dou
   * @param qx Second component of the orientation quaternion.
   * @param qy Third component of the orientation quaternion.
   * @param qz Fourth component of the orientation quaternion.
-  * @param ang Set the robot angle
   * @param idCode User code identifying the message. Will be sent back with the acknowledgement.
   * @return String to be sent to ABB server.
   */
@@ -89,8 +88,9 @@ string ABBInterpreter::setCartesianJ(double x, double y, double z, double q0, do
 string ABBInterpreter::setCartesianA(double x, double y, double z, double q0, double qx, double qy, double qz, double ang, int idCode)
 {
   string msg = stringFromInstructionCodeNoEnding(1,idCode);
-  sprintf(buff,"%+08.1lf %+08.1lf %+08.1lf %+08.5lf %+08.5lf %+08.5lf %+08.5lf %+08.5lf ",x,y,z,q0,qx,qy,qz,ang);  msg += buff ;
-  return (msg+"#");
+  sprintf(buff,"%+08.1lf %+08.1lf %+08.1lf %+08.5lf %+08.5lf %+08.5lf %+08.5lf ",x,y,z,q0,qx,qy,qz);  msg += buff ;
+  //sprintf(buff,"%+08.1lf %+08.1lf %+08.1lf %+08.5lf %+08.5lf %+08.5lf %+08.5lf %+08.5lf ",x,y,z,q0,qx,qy,qz,ang);  msg += buff ;
+  return (msg+" -108 #");
 }
 
 /**
