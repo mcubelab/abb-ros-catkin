@@ -65,6 +65,10 @@ void RobotComm::subscribe(ros::NodeHandle* np)
     np->serviceClient<robot_comm::robot_ActivateEGM>(robotname + "_ActivateEGM");
   handle_robot_IOSignal =
     np->serviceClient<robot_comm::robot_IOSignal>(robotname + "_IOSignal");
+  handle_robot_HandJogIn =
+    np->serviceClient<robot_comm::robot_IOSignal>(robotname + "_HandJogIn");
+  handle_robot_HandJogOut =
+    np->serviceClient<robot_comm::robot_IOSignal>(robotname + "_HandJogOut");
 }
 
 void RobotComm::subscribeCartesian(ros::NodeHandle* np, int q_len, 
@@ -112,6 +116,8 @@ void RobotComm::shutdown()
   handle_robot_Approach.shutdown();
   handle_robot_ActivateEGM.shutdown();
   handle_robot_IOSignal.shutdown();
+  handle_robot_HandJogIn.shutdown();
+  handle_robot_HandJogOut.shutdown();
 }
 
 bool RobotComm::Ping()
@@ -686,4 +692,16 @@ bool RobotComm::SetDefaults()
 {
   return handle_robot_SetDefaults.call(robot_SetDefaults_srv);
 }
+
+
+bool RobotComm::HandJogIn()
+{
+  return handle_robot_HandJogIn.call(robot_HandJogIn_srv);
+}
+
+bool RobotComm::HandJogOut()
+{
+  return handle_robot_HandJogOut.call(robot_HandJogOut_srv);
+}
+
 

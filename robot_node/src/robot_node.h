@@ -96,6 +96,9 @@ class RobotController
   SERVICE_CALLBACK_DEC(IsMoving)
   SERVICE_CALLBACK_DEC(Approach)
   SERVICE_CALLBACK_DEC(SetMotionSupervision)
+
+  SERVICE_CALLBACK_DEC(HandJogIn)
+  SERVICE_CALLBACK_DEC(HandJogOut)
   
   // Buffer (joints) Comm declerations:
   SERVICE_CALLBACK_DEC(AddJointPosBuffer)
@@ -167,12 +170,14 @@ class RobotController
   bool addJointPosBuffer(double j1, double j2, double j3, double j4, double j5, double j6, double j7);
   bool executeJointPosBuffer();
   bool clearJointPosBuffer();
+
+  bool handJogIn();
+  bool handJogOut();
   
   // Buffer Commands for joint positions
   bool addBuffer(double x, double y, double z, double q0, double qx, double qy, double qz);
   bool executeBuffer();
   bool clearBuffer();
-
 
   // Functions that compute our distance from the current position to the goal
   double posDistFromGoal();
@@ -237,7 +242,9 @@ class RobotController
   ros::ServiceServer handle_robot_ActivateEGM;
   ros::ServiceServer handle_robot_SetMotionSupervision;
   ros::ServiceServer handle_robot_IOSignal;
- 
+  ros::ServiceServer handle_robot_HandJogIn;
+  ros::ServiceServer handle_robot_HandJogOut; 
+
   // Helper function for communicating with robot server
   bool sendAndReceive(char *message, int messageLength, 
       char*reply, int idCode=-1);

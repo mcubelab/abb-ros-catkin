@@ -46,6 +46,8 @@ RobotController::~RobotController() {
   handle_robot_DeactivateCSS.shutdown();
   handle_robot_ActivateEGM.shutdown();
   handle_robot_SetMotionSupervision.shutdown();
+  handle_robot_HandJogIn.shutdown();
+  handle_robot_HandJogOut.shutdown();
 
   // Shut down topics.
   handle_robot_CartesianLog.shutdown();
@@ -288,6 +290,9 @@ void RobotController::advertiseServices()
   INIT_HANDLE(AddBuffer)
   INIT_HANDLE(ExecuteBuffer)
   INIT_HANDLE(ClearBuffer)
+
+  INIT_HANDLE(HandJogIn)
+  INIT_HANDLE(HandJogOut)
       
   // CSS
   INIT_HANDLE(ActivateCSS)
@@ -961,6 +966,15 @@ SERVICE_CALLBACK_DEF(ActivateEGM)
   return RUN_AND_RETURN_RESULT(actEGM(req), res.ret, res.msg, "Not able to activate EGM");
 }
 
+SERVICE_CALLBACK_DEF(HandJogIn)
+{
+  return RUN_AND_RETURN_RESULT(handJogIn(), res.ret, res.msg, "Not able to jog hand in");
+}
+
+SERVICE_CALLBACK_DEF(HandJogOut) 
+{
+  return RUN_AND_RETURN_RESULT(handJogOut(), res.ret, res.msg, "Not able to jog hand out");
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // Internal methods that let us execute certain robot functions without using 
@@ -1424,6 +1438,22 @@ bool RobotController::clearJointPosBuffer()
 {
   PREPARE_TO_TALK_TO_ROBOT
   strcpy(message, ABBInterpreter::clearJointPosBuffer(randNumber).c_str());
+  SEND_MSG_TO_ROBOT_AND_END
+}
+
+// Jog In
+bool RobotController::handJogIn()
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::handJogIn(randNumber).c_str());
+  SEND_MSG_TO_ROBOT_AND_END
+}
+
+// Jog Out
+bool RobotController::handJogOut()
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::handJogOut(randNumber).c_str());
   SEND_MSG_TO_ROBOT_AND_END
 }
 

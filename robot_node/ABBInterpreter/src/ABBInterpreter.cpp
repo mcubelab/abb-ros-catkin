@@ -291,6 +291,16 @@ string ABBInterpreter::closeRRI(int idCode)
   return stringFromInstructionCode(51,idCode);
 }
 
+string ABBInterpreter::handJogIn(int idCode)
+{
+  return stringFromInstructionCode(16,idCode);
+}
+
+string ABBInterpreter::handJogOut(int idCode)
+{
+  return stringFromInstructionCode(17,idCode);
+}
+
 /**
   * Formats message to define the coordinates of the work object reference frame.
   * @param refFrame The coordinate system the soft direction is related to.

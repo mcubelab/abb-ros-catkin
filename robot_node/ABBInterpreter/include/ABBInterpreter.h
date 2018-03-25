@@ -40,6 +40,9 @@ namespace ABBInterpreter
   string addJointPosBuffer(double q1, double q2, double q3, double q4, double q5, double q6, double q7, int idCode=0);
   string clearJointPosBuffer(int idCode=0);
   string executeJointPosBuffer(int idCode=0);
+  // Hand
+  string handJogIn(int idCode=0);
+  string handJogOut(int idCode=0);
   // RRI
   string connectRRI(int idCode=0);
   string closeRRI(int idCode=0);
