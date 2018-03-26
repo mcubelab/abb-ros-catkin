@@ -114,7 +114,6 @@ class RobotController
   SERVICE_CALLBACK_DEC(HandOnVacuum)
   SERVICE_CALLBACK_DEC(HandOffVacuum)
   SERVICE_CALLBACK_DEC(HandGetPressure)
-  //TODO
   
   // Buffer (joints) Comm declerations:
   SERVICE_CALLBACK_DEC(AddJointPosBuffer)
