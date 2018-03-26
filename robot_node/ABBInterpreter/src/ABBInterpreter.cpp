@@ -291,6 +291,92 @@ string ABBInterpreter::closeRRI(int idCode)
   return stringFromInstructionCode(51,idCode);
 }
 
+string ABBInterpreter::handJogIn(int idCode)
+{
+  return stringFromInstructionCode(16,idCode);
+}
+
+string ABBInterpreter::handJogOut(int idCode)
+{
+  return stringFromInstructionCode(17,idCode);
+}
+
+string ABBInterpreter::handMoveTo(double handPose, int idCode)
+{
+  string msg = stringFromInstructionCodeNoEnding(18,idCode);
+  sprintf(buff,"%08.1lf ",handPose);  msg += buff ;
+  return (msg+"#");
+}
+
+string ABBInterpreter::handCalibrate(int idCode)
+{
+  return stringFromInstructionCode(19,idCode);
+}
+
+string ABBInterpreter::handStop(int idCode)
+{
+  return stringFromInstructionCode(20,idCode);
+}
+
+string ABBInterpreter::handSetSpeed(double handSpeed, int idCode)
+{
+  string msg = stringFromInstructionCodeNoEnding(21,idCode);
+  sprintf(buff,"%08.1lf ",handSpeed);  msg += buff ;
+  return (msg+"#");
+}
+
+string ABBInterpreter::handSetForce(double handForce, int idCode)
+{
+  string msg = stringFromInstructionCodeNoEnding(22,idCode);
+  sprintf(buff,"%08.1lf ",handForce);  msg += buff ;
+  return (msg+"#");
+}
+
+string ABBInterpreter::handIsCalibrated(int idCode)
+{
+  return stringFromInstructionCode(23,idCode);
+}
+
+string ABBInterpreter::handGetPose(int idCode)
+{
+  return stringFromInstructionCode(24,idCode);
+}
+
+string ABBInterpreter::handGripIn(int idCode)
+{
+  return stringFromInstructionCode(25,idCode);
+}
+
+string ABBInterpreter::handGripOut(int idCode)
+{
+  return stringFromInstructionCode(26,idCode);
+}
+
+string ABBInterpreter::handOnBlow(int idCode)
+{
+  return stringFromInstructionCode(41,idCode);
+}
+
+string ABBInterpreter::handOffBlow(int idCode)
+{
+  return stringFromInstructionCode(42, idCode);
+}
+
+string ABBInterpreter::handOnVacuum(int idCode)
+{
+  return stringFromInstructionCode(43,idCode);
+}
+
+string ABBInterpreter::handOffVacuum(int idCode)
+{
+  return stringFromInstructionCode(44, idCode);
+}
+
+string ABBInterpreter::handGetPressure(int idCode)
+{
+  return stringFromInstructionCode(45,idCode);
+}
+
 /**
   * Formats message to define the coordinates of the work object reference frame.
   * @param refFrame The coordinate system the soft direction is related to.
@@ -427,6 +513,16 @@ int ABBInterpreter::parseJoints(std::string msg,  double *joint1,
 {
   int ok, idCode;
   sscanf(msg.c_str(),"%*d %d %d %*f %lf %lf %lf %lf %lf %lf %lf",&idCode,&ok,joint1,joint2,joint3,joint4,joint5,joint6,joint7);
+  if (ok)
+    return idCode;
+  else
+    return -1;
+}
+
+int ABBInterpreter::parseHandValue(std::string msg,  double *value)
+{
+  int ok, idCode;
+  sscanf(msg.c_str(),"%*d %d %d %*f %lf",&idCode,&ok,value);
   if (ok)
     return idCode;
   else

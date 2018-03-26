@@ -1,0 +1,5 @@
+#Service to jog the Yumi hand out
+
+---
+int64 ret
+string msg

@@ -65,6 +65,38 @@ void RobotComm::subscribe(ros::NodeHandle* np)
     np->serviceClient<robot_comm::robot_ActivateEGM>(robotname + "_ActivateEGM");
   handle_robot_IOSignal =
     np->serviceClient<robot_comm::robot_IOSignal>(robotname + "_IOSignal");
+  handle_robot_HandJogIn =
+    np->serviceClient<robot_comm::robot_HandJogIn>(robotname + "_HandJogIn");
+  handle_robot_HandJogOut =
+    np->serviceClient<robot_comm::robot_HandJogOut>(robotname + "_HandJogOut");
+  handle_robot_HandIsCalibrated =
+    np->serviceClient<robot_comm::robot_HandIsCalibrated>(robotname + "_HandIsCalibrated");
+  handle_robot_HandMoveTo =
+    np->serviceClient<robot_comm::robot_HandMoveTo>(robotname + "_HandMoveTo");
+  handle_robot_HandSetForce =
+    np->serviceClient<robot_comm::robot_HandSetForce>(robotname + "_HandSetForce");
+  handle_robot_HandSetSpeed =
+    np->serviceClient<robot_comm::robot_HandSetSpeed>(robotname + "_HandSetSpeed");
+  handle_robot_HandCalibrate =
+    np->serviceClient<robot_comm::robot_HandCalibrate>(robotname + "_HandCalibrate");
+  handle_robot_HandStop =
+    np->serviceClient<robot_comm::robot_HandStop>(robotname + "_HandStop");
+  handle_robot_HandGetPose =
+    np->serviceClient<robot_comm::robot_HandGetPose>(robotname + "_HandGetPose");
+  handle_robot_HandGripIn =
+    np->serviceClient<robot_comm::robot_HandGripIn>(robotname + "_HandGripIn");
+  handle_robot_HandGripOut =
+    np->serviceClient<robot_comm::robot_HandGripOut>(robotname + "_HandGripOut");
+  handle_robot_HandOnBlow =
+    np->serviceClient<robot_comm::robot_HandOnBlow>(robotname + "_HandOnBlow");
+  handle_robot_HandOffBlow =
+    np->serviceClient<robot_comm::robot_HandOffBlow>(robotname + "_HandOffBlow");
+  handle_robot_HandOnVacuum =
+    np->serviceClient<robot_comm::robot_HandOnVacuum>(robotname + "_HandOnVacuum");
+  handle_robot_HandOffVacuum =
+    np->serviceClient<robot_comm::robot_HandOffVacuum>(robotname + "_HandOffVacuum");
+  handle_robot_HandGetPressure =
+    np->serviceClient<robot_comm::robot_HandGetPressure>(robotname + "_HandGetPressure");
 }
 
 void RobotComm::subscribeCartesian(ros::NodeHandle* np, int q_len, 
@@ -112,6 +144,23 @@ void RobotComm::shutdown()
   handle_robot_Approach.shutdown();
   handle_robot_ActivateEGM.shutdown();
   handle_robot_IOSignal.shutdown();
+  handle_robot_HandJogIn.shutdown();
+  handle_robot_HandJogOut.shutdown();
+
+  handle_robot_HandIsCalibrated.shutdown();
+  handle_robot_HandMoveTo.shutdown();
+  handle_robot_HandSetForce.shutdown();
+  handle_robot_HandSetSpeed.shutdown();
+  handle_robot_HandCalibrate.shutdown();
+  handle_robot_HandStop.shutdown();
+  handle_robot_HandGetPose.shutdown();
+  handle_robot_HandGripIn.shutdown();
+  handle_robot_HandGripOut.shutdown();
+  handle_robot_HandOnBlow.shutdown();
+  handle_robot_HandOffBlow.shutdown();
+  handle_robot_HandOnVacuum.shutdown();
+  handle_robot_HandOffVacuum.shutdown();
+  handle_robot_HandGetPressure.shutdown();
 }
 
 bool RobotComm::Ping()
@@ -686,4 +735,98 @@ bool RobotComm::SetDefaults()
 {
   return handle_robot_SetDefaults.call(robot_SetDefaults_srv);
 }
+
+
+bool RobotComm::HandJogIn()
+{
+  return handle_robot_HandJogIn.call(robot_HandJogIn_srv);
+}
+
+bool RobotComm::HandJogOut()
+{
+  return handle_robot_HandJogOut.call(robot_HandJogOut_srv);
+}
+
+bool RobotComm::HandCalibrate()
+{
+  return handle_robot_HandCalibrate.call(robot_HandCalibrate_srv);
+}
+
+bool RobotComm::HandStop()
+{
+  return handle_robot_HandStop.call(robot_HandStop_srv);
+}
+
+bool RobotComm::HandGripIn()
+{
+  return handle_robot_HandGripIn.call(robot_HandGripIn_srv);
+}
+
+bool RobotComm::HandGripOut()
+{
+  return handle_robot_HandGripOut.call(robot_HandGripOut_srv);
+}
+
+bool RobotComm::HandOnBlow()
+{
+  return handle_robot_HandOnBlow.call(robot_HandOnBlow_srv);
+}
+
+bool RobotComm::HandOffBlow()
+{
+  return handle_robot_HandOffBlow.call(robot_HandOffBlow_srv);
+}
+
+bool RobotComm::HandOnVacuum()
+{
+  return handle_robot_HandOnVacuum.call(robot_HandOnVacuum_srv);
+}
+
+bool RobotComm::HandOffVacuum()
+{
+  return handle_robot_HandOffVacuum.call(robot_HandOffVacuum_srv);
+}
+
+bool RobotComm::HandMoveTo(const double handPose)
+{
+  robot_HandMoveTo_srv.request.handPose = handPose;
+  return handle_robot_HandMoveTo.call(robot_HandMoveTo_srv);
+}
+
+bool RobotComm::HandSetForce(const double handForce)
+{
+  robot_HandSetForce_srv.request.handForce = handForce;
+  return handle_robot_HandSetForce.call(robot_HandSetForce_srv);
+}
+
+bool RobotComm::HandSetSpeed(const double handSpeed)
+{
+  robot_HandSetSpeed_srv.request.handSpeed = handSpeed;
+  return handle_robot_HandSetSpeed.call(robot_HandSetSpeed_srv);
+}
+
+bool RobotComm::HandIsCalibrated()
+{
+  if (handle_robot_HandIsCalibrated.call(robot_HandIsCalibrated_srv))
+  {
+    return robot_HandIsCalibrated_srv.response.handCalibrated;
+  }
+  else
+    return false;
+}
+
+bool RobotComm::HandGetPose(double &pose)
+{
+  bool success = handle_robot_HandGetPose.call(robot_HandGetPose_srv);
+  pose = robot_HandGetPose_srv.response.pose;
+  return success;
+}
+
+bool RobotComm::HandGetPressure(double &pressure)
+{
+  bool success = handle_robot_HandGetPressure.call(robot_HandGetPressure_srv);
+  pressure = robot_HandGetPressure_srv.response.pressure;
+  return success;
+}
+
 

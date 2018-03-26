@@ -1,0 +1,5 @@
+#Service to calibrate robot hand
+
+---
+int64 ret
+string msg
