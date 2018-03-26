@@ -43,6 +43,20 @@ namespace ABBInterpreter
   // Hand
   string handJogIn(int idCode=0);
   string handJogOut(int idCode=0);
+  string handStop(int idCode=0);
+  string handCalibrate(int idCode=0);
+  string handGripIn(int idCode=0);
+  string handGripOut(int idCode=0);
+  string handOnBlow(int idCode=0);
+  string handOffBlow(int idCode=0);
+  string handOnVacuum(int idCode=0);
+  string handOffVacuum(int idCode=0);
+  string handSetSpeed(double handSpeed, int idCode=0);
+  string handSetForce(double handForce, int idCode=0);
+  string handMoveTo(double handPose, int idCode=0);
+  string handGetPose(int idCode=0);
+  string handGetPressure(int idCode=0);
+  string handIsCalibrated(int idCode=0);
   // RRI
   string connectRRI(int idCode=0);
   string closeRRI(int idCode=0);
@@ -58,6 +72,7 @@ namespace ABBInterpreter
   int parseCartesian(string msg, double *x, double *y, double *z,
       double *q0, double *qx, double *qy, double *qz);
   int parseJoints(string msg, double *joint1, double *joint2, 
-      double *joint3, double *joint4, double *joint5, double *joint6, double *joint7);  
+      double *joint3, double *joint4, double *joint5, double *joint6, double *joint7);
+  int parseHandValue(string msg, double *value);  
 }
 #endif

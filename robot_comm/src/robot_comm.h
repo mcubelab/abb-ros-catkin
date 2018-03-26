@@ -36,6 +36,20 @@
 
 #include <robot_comm/robot_HandJogIn.h>
 #include <robot_comm/robot_HandJogOut.h>
+#include <robot_comm/robot_HandIsCalibrated.h>
+#include <robot_comm/robot_HandMoveTo.h>
+#include <robot_comm/robot_HandSetForce.h>
+#include <robot_comm/robot_HandSetSpeed.h>
+#include <robot_comm/robot_HandCalibrate.h>
+#include <robot_comm/robot_HandStop.h>
+#include <robot_comm/robot_HandGetPose.h>
+#include <robot_comm/robot_HandGripIn.h>
+#include <robot_comm/robot_HandGripOut.h>
+#include <robot_comm/robot_HandOnBlow.h>
+#include <robot_comm/robot_HandOffBlow.h>
+#include <robot_comm/robot_HandOnVacuum.h>
+#include <robot_comm/robot_HandOffVacuum.h>
+#include <robot_comm/robot_HandGetPressure.h>
 
 #include <robot_comm/robot_CartesianLog.h>
 #include <robot_comm/robot_JointsLog.h>
@@ -167,6 +181,20 @@ class RobotComm
 
     bool HandJogIn();
     bool HandJogOut();
+    bool HandGripIn();
+    bool HandGripOut();
+    bool HandOnBlow();
+    bool HandOffBlow();
+    bool HandOnVacuum();
+    bool HandOffVacuum();
+    bool HandCalibrate();
+    bool HandStop();
+    bool HandIsCalibrated();
+    bool HandMoveTo(const double handPose);
+    bool HandSetForce(const double handForce);
+    bool HandSetSpeed(const double handSpeed);
+    bool HandGetPose(double &pose);
+    bool HandGetPressure(double &pressure);
 
     bool Approach(geometry_msgs::Pose pose);
     bool moveArm(geometry_msgs::Pose pose);
@@ -218,6 +246,20 @@ class RobotComm
     
     ros::ServiceClient handle_robot_HandJogIn;
     ros::ServiceClient handle_robot_HandJogOut;
+    ros::ServiceClient handle_robot_HandIsCalibrated;
+    ros::ServiceClient handle_robot_HandMoveTo;
+    ros::ServiceClient handle_robot_HandSetForce;
+    ros::ServiceClient handle_robot_HandSetSpeed;
+    ros::ServiceClient handle_robot_HandCalibrate;
+    ros::ServiceClient handle_robot_HandStop;
+    ros::ServiceClient handle_robot_HandGetPose;
+    ros::ServiceClient handle_robot_HandGripIn;
+    ros::ServiceClient handle_robot_HandGripOut;
+    ros::ServiceClient handle_robot_HandOnBlow;
+    ros::ServiceClient handle_robot_HandOffBlow;
+    ros::ServiceClient handle_robot_HandOnVacuum;
+    ros::ServiceClient handle_robot_HandOffVacuum;
+    ros::ServiceClient handle_robot_HandGetPressure;
 
     ros::ServiceClient handle_robot_AddJointPosBuffer;
     ros::ServiceClient handle_robot_ExecuteJointPosBuffer;
@@ -255,6 +297,20 @@ class RobotComm
     
     robot_comm::robot_HandJogIn robot_HandJogIn_srv;
     robot_comm::robot_HandJogOut robot_HandJogOut_srv;
+    robot_comm::robot_HandMoveTo robot_HandMoveTo_srv;
+    robot_comm::robot_HandSetForce robot_HandSetForce_srv;
+    robot_comm::robot_HandSetSpeed robot_HandSetSpeed_srv;
+    robot_comm::robot_HandIsCalibrated robot_HandIsCalibrated_srv;
+    robot_comm::robot_HandGetPose robot_HandGetPose_srv;
+    robot_comm::robot_HandCalibrate robot_HandCalibrate_srv;
+    robot_comm::robot_HandStop robot_HandStop_srv;
+    robot_comm::robot_HandGripIn robot_HandGripIn_srv;
+    robot_comm::robot_HandGripOut robot_HandGripOut_srv;
+    robot_comm::robot_HandOnBlow robot_HandOnBlow_srv;
+    robot_comm::robot_HandOffBlow robot_HandOffBlow_srv;
+    robot_comm::robot_HandOnVacuum robot_HandOnVacuum_srv;
+    robot_comm::robot_HandOffVacuum robot_HandOffVacuum_srv;
+    robot_comm::robot_HandGetPressure robot_HandGetPressure_srv;
 
     robot_comm::robot_AddJointPosBuffer robot_AddJointPosBuffer_srv;
     robot_comm::robot_ExecuteJointPosBuffer robot_ExecuteJointPosBuffer_srv;
