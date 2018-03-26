@@ -97,6 +97,24 @@ class RobotController
   SERVICE_CALLBACK_DEC(IsMoving)
   SERVICE_CALLBACK_DEC(Approach)
   SERVICE_CALLBACK_DEC(SetMotionSupervision)
+
+  SERVICE_CALLBACK_DEC(HandJogIn)
+  SERVICE_CALLBACK_DEC(HandJogOut)
+  SERVICE_CALLBACK_DEC(HandCalibrate)
+  SERVICE_CALLBACK_DEC(HandStop)
+  SERVICE_CALLBACK_DEC(HandMoveTo)
+  SERVICE_CALLBACK_DEC(HandSetForce)
+  SERVICE_CALLBACK_DEC(HandSetSpeed)
+  SERVICE_CALLBACK_DEC(HandGetPose)
+  SERVICE_CALLBACK_DEC(HandIsCalibrated)
+  SERVICE_CALLBACK_DEC(HandGripIn)
+  SERVICE_CALLBACK_DEC(HandGripOut)
+  SERVICE_CALLBACK_DEC(HandOnBlow)
+  SERVICE_CALLBACK_DEC(HandOffBlow)
+  SERVICE_CALLBACK_DEC(HandOnVacuum)
+  SERVICE_CALLBACK_DEC(HandOffVacuum)
+  SERVICE_CALLBACK_DEC(HandGetPressure)
+  //TODO
   
   // Buffer (joints) Comm declerations:
   SERVICE_CALLBACK_DEC(AddJointPosBuffer)
@@ -173,12 +191,22 @@ class RobotController
   bool addJointPosBuffer(double j1, double j2, double j3, double j4, double j5, double j6, double j7);
   bool executeJointPosBuffer();
   bool clearJointPosBuffer();
-  
+
+  bool handJogIn();
+  bool handJogOut();
+  bool handCalibrate();
+  bool handStop();
+  bool handGripIn();
+  bool handGripOut();
+  bool handOnBlow();
+  bool handOffBlow();
+  bool handOnVacuum();
+  bool handOffVacuum();
+ 
   // Buffer Commands for joint positions
   bool addBuffer(double x, double y, double z, double q0, double qx, double qy, double qz);
   bool executeBuffer();
   bool clearBuffer();
-
 
   // Functions that compute our distance from the current position to the goal
   double posDistFromGoal();
@@ -244,7 +272,23 @@ class RobotController
   ros::ServiceServer handle_robot_ActivateEGM;
   ros::ServiceServer handle_robot_SetMotionSupervision;
   ros::ServiceServer handle_robot_IOSignal;
- 
+  ros::ServiceServer handle_robot_HandJogIn;
+  ros::ServiceServer handle_robot_HandJogOut; 
+  ros::ServiceServer handle_robot_HandCalibrate;
+  ros::ServiceServer handle_robot_HandStop;
+  ros::ServiceServer handle_robot_HandMoveTo;
+  ros::ServiceServer handle_robot_HandSetForce;
+  ros::ServiceServer handle_robot_HandSetSpeed;
+  ros::ServiceServer handle_robot_HandGetPose;
+  ros::ServiceServer handle_robot_HandIsCalibrated;
+  ros::ServiceServer handle_robot_HandGripIn;
+  ros::ServiceServer handle_robot_HandGripOut;
+  ros::ServiceServer handle_robot_HandOnBlow;
+  ros::ServiceServer handle_robot_HandOffBlow;
+  ros::ServiceServer handle_robot_HandOnVacuum;
+  ros::ServiceServer handle_robot_HandOffVacuum;
+  ros::ServiceServer handle_robot_HandGetPressure;
+
   // Helper function for communicating with robot server
   bool sendAndReceive(char *message, int messageLength, 
       char*reply, int idCode=-1);
@@ -277,6 +321,14 @@ class RobotController
   
   // Check if robot is currently moving or not
   bool is_moving();
+
+  // Hand functions
+  bool handMoveTo(double handPose);
+  bool handSetForce(double handForce);
+  bool handSetSpeed(double handSpeed);
+  bool handGetPose(double &pose);
+  bool handGetPressure(double &pressure);
+  bool handIsCalibrated(double &handCalibrated);
   
   // Functions to handle setting up non-blocking step sizes
   bool setTrackDist(double pos_dist, double ang_dist);

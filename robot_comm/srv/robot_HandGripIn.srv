@@ -1,0 +1,5 @@
+#Service to grip the Yumi hand in
+
+---
+int64 ret
+string msg
