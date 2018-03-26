@@ -31,6 +31,7 @@ RobotController::~RobotController() {
   handle_robot_GetJoints.shutdown();
   handle_robot_GetIK.shutdown();
   handle_robot_GetFK.shutdown();
+  handle_robot_GetRobotAngle.shutdown();
   handle_robot_Stop.shutdown();
   handle_robot_SetTool.shutdown();
   handle_robot_SetInertia.shutdown();
@@ -287,6 +288,7 @@ void RobotController::advertiseServices()
   INIT_HANDLE(GetJoints)
   INIT_HANDLE(GetIK)
   INIT_HANDLE(GetFK)
+  INIT_HANDLE(GetRobotAngle)
   INIT_HANDLE(Stop)
   INIT_HANDLE(SetTool)
   INIT_HANDLE(SetInertia)
@@ -1020,6 +1022,12 @@ bool RobotController::setNonBlockSpeed(double tcp, double ori)
   return true;
 }
 
+SERVICE_CALLBACK_DEF(GetRobotAngle)
+{
+  return RUN_AND_RETURN_RESULT(getRobotAngle(res.angle), res.ret, res.msg, "ROBOT_CONTROLLER: Not able to get robot angle.");
+}
+
+
 // TCP Pose buffer commands
 SERVICE_CALLBACK_DEF(AddBuffer)
 {
@@ -1583,6 +1591,22 @@ bool RobotController::is_moving()
 {
   if (non_blocking)
     return do_nb_move;
+  else
+    return false;
+}
+
+// Query the robot angle
+bool RobotController::getRobotAngle(double &angle)
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::getRobotAngle(randNumber).c_str());
+
+  if(sendAndReceive(message, strlen(message), reply, randNumber))
+  {
+    // Get speed
+    ABBInterpreter::parseHandValue(reply, &angle);
+    return true;
+  }
   else
     return false;
 }

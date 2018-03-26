@@ -27,6 +27,7 @@
 #include <robot_comm/robot_SetDefaults.h>
 #include <robot_comm/robot_GetIK.h>
 #include <robot_comm/robot_GetFK.h>
+#include <robot_comm/robot_GetRobotAngle.h>
 #include <robot_comm/robot_Approach.h>
 #include <robot_comm/robot_AddJointPosBuffer.h>
 #include <robot_comm/robot_ExecuteJointPosBuffer.h>
@@ -131,7 +132,7 @@ class RobotComm
     bool SetCartesian(const double cart[7]);
     bool SetCartesianJ(const HomogTransf pose);
     bool SetCartesianJ(const double cart[7]);
-    bool SetCartesianJ(const double x, const double y, const double z,
+    bool SetCartesianJ(const double x, const double y, const double z, 
         const double q0, const double qx, const double qy, const double qz);
     bool SetCartesianA(const HomogTransf pose, const double ang);
     bool SetCartesianA(const double cart[8]);
@@ -183,6 +184,7 @@ class RobotComm
 
     bool GetIK(const HomogTransf pose, double joints[NUM_JOINTS]);
     bool GetFK(const double joints[NUM_JOINTS], HomogTransf &pose);
+    bool GetRobotAngle(double &angle);
 
     bool HandJogIn();
     bool HandJogOut();
@@ -247,6 +249,7 @@ class RobotComm
     ros::ServiceClient handle_robot_SetDefaults;
     ros::ServiceClient handle_robot_GetIK;
     ros::ServiceClient handle_robot_GetFK;
+    ros::ServiceClient handle_robot_GetRobotAngle;
     ros::ServiceClient handle_robot_Approach;
     ros::ServiceClient handle_robot_SetMotionSupervision;
     
@@ -300,6 +303,7 @@ class RobotComm
     robot_comm::robot_SetDefaults robot_SetDefaults_srv;
     robot_comm::robot_GetIK robot_GetIK_srv;
     robot_comm::robot_GetFK robot_GetFK_srv;
+    robot_comm::robot_GetRobotAngle robot_GetRobotAngle_srv;
     robot_comm::robot_Approach robot_Approach_srv;
     
     robot_comm::robot_HandJogIn robot_HandJogIn_srv;

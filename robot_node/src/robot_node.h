@@ -84,6 +84,7 @@ class RobotController
   SERVICE_CALLBACK_DEC(GetJoints)
   SERVICE_CALLBACK_DEC(GetIK)
   SERVICE_CALLBACK_DEC(GetFK)
+  SERVICE_CALLBACK_DEC(GetRobotAngle)
   SERVICE_CALLBACK_DEC(Stop)
   SERVICE_CALLBACK_DEC(SetTool)
   SERVICE_CALLBACK_DEC(SetInertia)
@@ -247,6 +248,7 @@ class RobotController
   ros::ServiceServer handle_robot_GetJoints;
   ros::ServiceServer handle_robot_GetIK;
   ros::ServiceServer handle_robot_GetFK;
+  ros::ServiceServer handle_robot_GetRobotAngle;
   ros::ServiceServer handle_robot_Stop;
   ros::ServiceServer handle_robot_SetTool;
   ros::ServiceServer handle_robot_SetInertia;
@@ -328,7 +330,10 @@ class RobotController
   bool handGetPose(double &pose);
   bool handGetPressure(double &pressure);
   bool handIsCalibrated(double &handCalibrated);
-  
+
+  // Robot angle function
+  bool getRobotAngle(double &angle); 
+ 
   // Functions to handle setting up non-blocking step sizes
   bool setTrackDist(double pos_dist, double ang_dist);
   bool setNonBlockSpeed(double tcp, double ori);

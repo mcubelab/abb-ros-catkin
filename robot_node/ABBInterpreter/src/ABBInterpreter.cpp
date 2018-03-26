@@ -261,6 +261,11 @@ string ABBInterpreter::setZone(bool fine, double tcp_mm, double ori_mm, double o
   return (msg+"#");
 }
 
+string ABBInterpreter::getRobotAngle(int idCode)
+{
+  return stringFromInstructionCode(10,idCode);
+}
+
 string ABBInterpreter::addBuffer(double x, double y, double z, double q0, double qx, double qy, double qz, int idCode)
 {
   //appends single target to the buffer

@@ -61,6 +61,8 @@ void RobotComm::subscribe(ros::NodeHandle* np)
     np->serviceClient<robot_comm::robot_GetIK>(robotname + "_GetIK");
   handle_robot_GetFK = 
     np->serviceClient<robot_comm::robot_GetFK>(robotname + "_GetFK");
+  handle_robot_GetRobotAngle =
+    np->serviceClient<robot_comm::robot_GetRobotAngle>(robotname + "_GetRobotAngle");
   handle_robot_Approach =
     np->serviceClient<robot_comm::robot_Approach>(robotname + "_Approach");
   handle_robot_ActivateEGM =
@@ -144,6 +146,7 @@ void RobotComm::shutdown()
   handle_robot_SetDefaults.shutdown();
   handle_robot_GetIK.shutdown();
   handle_robot_GetFK.shutdown();
+  handle_robot_GetRobotAngle.shutdown();
   handle_robot_Approach.shutdown();
   handle_robot_ActivateEGM.shutdown();
   handle_robot_IOSignal.shutdown();
@@ -683,7 +686,12 @@ bool RobotComm::GetFK(const double joints[NUM_JOINTS], HomogTransf &pose)
   return false;
 }
 
-
+bool RobotComm::GetRobotAngle(double &angle)
+{
+  bool success = handle_robot_GetRobotAngle.call(robot_GetRobotAngle_srv);
+  angle = robot_GetRobotAngle_srv.response.angle;
+  return success;
+}
 
 bool RobotComm::moveArm(geometry_msgs::Pose pose)
 {

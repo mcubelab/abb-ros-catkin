@@ -67,6 +67,7 @@ add_service_files(DIRECTORY srv FILES
     robot_HandOnVacuum.srv
     robot_HandOffVacuum.srv
     robot_HandGetPressure.srv
+    robot_GetRobotAngle.srv
 )
 
 
