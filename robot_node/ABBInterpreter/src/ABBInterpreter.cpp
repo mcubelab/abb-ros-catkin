@@ -88,11 +88,8 @@ string ABBInterpreter::setCartesianJ(double x, double y, double z, double q0, do
 string ABBInterpreter::setCartesianA(double x, double y, double z, double q0, double qx, double qy, double qz, double ang, int idCode)
 {
   string msg = stringFromInstructionCodeNoEnding(1,idCode);
-  sprintf(buff,"%+08.1lf %+08.1lf %+08.1lf %+08.5lf %+08.5lf %+08.5lf %+08.5lf -108 ",x,y,z,q0,qx,qy,qz);  msg += buff ;
+  sprintf(buff,"%+08.1lf %+08.1lf %+08.1lf %+08.5lf %+08.5lf %+08.5lf %+08.5lf %+08.1lf ",x,y,z,q0,qx,qy,qz,ang);  msg += buff ;
   return (msg+"#");
-
-  //sprintf(buff,"%+08.1lf %+08.1lf %+08.1lf %+08.5lf %+08.5lf %+08.5lf %+08.5lf %+08.5lf ",x,y,z,q0,qx,qy,qz,ang);  msg += buff ;
-  //return (msg+"#");
 }
 
 /**
