@@ -38,6 +38,9 @@ Each Yumi arm has 7 degrees of freedom, which therefore provides kinematic redun
 
 By changing the arm angle,  the tool center point and the orientation of the tool is fixed in space, hence only the entire angle of the arm moves. The tool center point is neither rotated nor moved. The arm angle does not correspond to a particular joint, but can be retrieved by the service `getRobotAngle`. The figure below shows the arm angle changing. 
 
+![Arm Angle](arm_angle.png)
+
+
 There are 3 commands that allow you to set the cartesian location of the end effector by two different strategies. 
 1. `SetCartesian` : This takes in the 7 numbers to determine the location (x, y, z, q0, qx, qy, qz).  The arm angle is not specified by the user. Instead the system uses the current robot angle (i.e. what is is set to before the command). Internally this uses the MoveL command, so it will plan in cartesian space. 
 2. `SetCartesianJ` : This has the same interface as `SetCartesian` but uses MoveJ internally and hence plans in joint space. 
