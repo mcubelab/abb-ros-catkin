@@ -25,11 +25,13 @@ RobotController::~RobotController() {
   handle_robot_Ping.shutdown();
   handle_robot_SetCartesian.shutdown();
   handle_robot_SetCartesianJ.shutdown();
+  handle_robot_SetCartesianA.shutdown();
   handle_robot_GetCartesian.shutdown();
   handle_robot_SetJoints.shutdown();
   handle_robot_GetJoints.shutdown();
   handle_robot_GetIK.shutdown();
   handle_robot_GetFK.shutdown();
+  handle_robot_GetRobotAngle.shutdown();
   handle_robot_Stop.shutdown();
   handle_robot_SetTool.shutdown();
   handle_robot_SetInertia.shutdown();
@@ -150,6 +152,8 @@ bool RobotController::init(std::string id)
   curP = Vec(3);
   curGoalP = Vec(3);
   curTargP = Vec(3);
+  curGoalAng = 0;
+  curTargAng = 0;
 
   // Set the Default Robot Configuration
   ROS_INFO("ROBOT_CONTROLLER: Setting robot default configuration...");
@@ -278,11 +282,13 @@ void RobotController::advertiseServices()
   INIT_HANDLE(Ping)
   INIT_HANDLE(SetCartesian)
   INIT_HANDLE(SetCartesianJ)
+  INIT_HANDLE(SetCartesianA)
   INIT_HANDLE(GetCartesian)
   INIT_HANDLE(SetJoints)
   INIT_HANDLE(GetJoints)
   INIT_HANDLE(GetIK)
   INIT_HANDLE(GetFK)
+  INIT_HANDLE(GetRobotAngle)
   INIT_HANDLE(Stop)
   INIT_HANDLE(SetTool)
   INIT_HANDLE(SetInertia)
@@ -448,6 +454,77 @@ SERVICE_CALLBACK_DEF(SetCartesianJ)
   {
     // If we are in blocking mode, simply execute the cartesian move
     if (!setCartesianJ(req.x, req.y, req.z, req.q0, req.qx, req.qy, req.qz))
+    {
+      res.ret = 0;
+      res.msg = "ROBOT_CONTROLLER: Not able to set cartesian coordinates ";
+      res.msg += "of the robot.";
+      return false;
+    }
+  }
+
+  res.ret = 1;
+  res.msg = "ROBOT_CONTROLLER: OK.";
+  return true;
+}
+
+// Moves the robot to a given cartesian position. If we are currently in
+// non-blocking mode, then we simply setup the move and let the non-blocking
+// thread handle the actual moving. If we are in blocking mode, we then 
+// communicate with the robot to execute the move.
+SERVICE_CALLBACK_DEF(SetCartesianA)
+{
+  // If we are in non-blocking mode
+  if (non_blocking)
+  {
+    // As we are changing some state variables, mutex this block to be sure
+    // we don't get unpredictable actions
+    pthread_mutex_lock(&nonBlockMutex);
+    if (!do_nb_move)
+    {
+      // If no move is currently being executed, we will now be doing
+      // a cartesian move.
+      cart_move = true;
+      cart_move_a = true;
+
+      // Our new target is simply the target passed by the user
+      setArrayFromScalars(curTargP, req.x, req.y, req.z);
+      setArrayFromScalars(curTargQ, req.q0, req.qx, req.qy, req.qz);
+      curTargAng = req.ang;
+
+      // The last goal in the non-blocking move is simply the current position
+      getCartesian(curGoalP[0], curGoalP[1], curGoalP[2],
+          curGoalQ[0], curGoalQ[1], curGoalQ[2], curGoalQ[3]);
+
+      // We are now ready to execute this non-blocking move
+      do_nb_move = true;
+    }
+    else if (cart_move)
+    {
+      cart_move_a = true;
+      // If we are currently doing a non-blocking cartesian move, we simply
+      // need to update our current target
+      setArrayFromScalars(curTargP, req.x, req.y, req.z);
+      setArrayFromScalars(curTargQ, req.q0, req.qx, req.qy, req.qz);
+      curTargAng = req.ang;
+
+      // Remember that we changed our target, again to maintain concurrency
+      targetChanged = true;
+    }
+    else
+    {
+      // If we are doing a non-blocking move, but it's a joint move,
+      // it would be much too dangerous to switch
+      res.ret = 0;
+      res.msg = "ROBOT_CONTROLLER: Can't do a cartesian move while doing a ";
+      res.msg += "non-blocking joint move!";
+      return false;
+    }
+    pthread_mutex_unlock(&nonBlockMutex);
+  }
+  else
+  {
+    // If we are in blocking mode, simply execute the cartesian move
+    if (!setCartesianA(req.x, req.y, req.z, req.q0, req.qx, req.qy, req.qz, req.ang))
     {
       res.ret = 0;
       res.msg = "ROBOT_CONTROLLER: Not able to set cartesian coordinates ";
@@ -945,6 +1022,12 @@ bool RobotController::setNonBlockSpeed(double tcp, double ori)
   return true;
 }
 
+SERVICE_CALLBACK_DEF(GetRobotAngle)
+{
+  return RUN_AND_RETURN_RESULT(getRobotAngle(res.angle), res.ret, res.msg, "ROBOT_CONTROLLER: Not able to get robot angle.");
+}
+
+
 // TCP Pose buffer commands
 SERVICE_CALLBACK_DEF(AddBuffer)
 {
@@ -1121,7 +1204,7 @@ bool RobotController::setCartesianJ(double x, double y, double z,
 {
   PREPARE_TO_TALK_TO_ROBOT
 
-  strcpy(message, ABBInterpreter::setCartesianJ(x, y, z, q0, qx, qy, qz, 
+  strcpy(message, ABBInterpreter::setCartesianJ(x, y, z, q0, qx, qy, qz,
         randNumber).c_str());
 
   if (sendAndReceive(message, strlen(message), reply, randNumber))
@@ -1129,6 +1212,28 @@ bool RobotController::setCartesianJ(double x, double y, double z,
     // If this was successful, keep track of the last commanded position
     setArrayFromScalars(curGoalP, x,y,z);
     setArrayFromScalars(curGoalQ, q0,qx,qy,qz);
+    return true;
+  }
+  else
+    return false;
+}
+
+// Command the robot to move to a given cartesian position using a joint
+// move
+bool RobotController::setCartesianA(double x, double y, double z,
+    double q0, double qx, double qy, double qz, double ang)
+{
+  PREPARE_TO_TALK_TO_ROBOT
+
+  strcpy(message, ABBInterpreter::setCartesianA(x, y, z, q0, qx, qy, qz, ang,
+        randNumber).c_str());
+
+  if (sendAndReceive(message, strlen(message), reply, randNumber))
+  {
+    // If this was successful, keep track of the last commanded position
+    setArrayFromScalars(curGoalP, x,y,z);
+    setArrayFromScalars(curGoalQ, q0,qx,qy,qz);
+    curGoalAng = ang;
     return true;
   }
   else
@@ -1486,6 +1591,22 @@ bool RobotController::is_moving()
 {
   if (non_blocking)
     return do_nb_move;
+  else
+    return false;
+}
+
+// Query the robot angle
+bool RobotController::getRobotAngle(double &angle)
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::getRobotAngle(randNumber).c_str());
+
+  if(sendAndReceive(message, strlen(message), reply, randNumber))
+  {
+    // Get speed
+    ABBInterpreter::parseHandValue(reply, &angle);
+    return true;
+  }
   else
     return false;
 }
@@ -2439,6 +2560,7 @@ void *nonBlockMain(void *args)
         if (robot->cart_move_j)
         {
           // Now do the cartesian move towards our new goal
+          //TODO need the angle 
           if (!robot->setCartesianJ(newGoalV[0], newGoalV[1], newGoalV[2],
                 newGoalQ[0], newGoalQ[1], newGoalQ[2], newGoalQ[3]))
           {
@@ -2448,6 +2570,7 @@ void *nonBlockMain(void *args)
             pthread_mutex_unlock(&nonBlockMutex);
           }
         }
+        //TODO add elseif robot->cart_move_a
         else
         {
           // Now do the cartesian move towards our new goal

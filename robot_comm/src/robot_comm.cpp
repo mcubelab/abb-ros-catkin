@@ -23,6 +23,8 @@ void RobotComm::subscribe(ros::NodeHandle* np)
     np->serviceClient<robot_comm::robot_SetCartesian>(robotname + "_SetCartesian");
   handle_robot_SetCartesianJ = 
     np->serviceClient<robot_comm::robot_SetCartesianJ>(robotname + "_SetCartesianJ");
+  handle_robot_SetCartesianA =
+    np->serviceClient<robot_comm::robot_SetCartesianA>(robotname + "_SetCartesianA");
   handle_robot_GetCartesian = 
     np->serviceClient<robot_comm::robot_GetCartesian>(robotname + "_GetCartesian");
   handle_robot_SetWorkObject = 
@@ -59,6 +61,8 @@ void RobotComm::subscribe(ros::NodeHandle* np)
     np->serviceClient<robot_comm::robot_GetIK>(robotname + "_GetIK");
   handle_robot_GetFK = 
     np->serviceClient<robot_comm::robot_GetFK>(robotname + "_GetFK");
+  handle_robot_GetRobotAngle =
+    np->serviceClient<robot_comm::robot_GetRobotAngle>(robotname + "_GetRobotAngle");
   handle_robot_Approach =
     np->serviceClient<robot_comm::robot_Approach>(robotname + "_Approach");
   handle_robot_ActivateEGM =
@@ -123,6 +127,7 @@ void RobotComm::shutdown()
   handle_robot_Ping.shutdown();
   handle_robot_SetCartesian.shutdown();
   handle_robot_SetCartesianJ.shutdown();
+  handle_robot_SetCartesianA.shutdown();
   handle_robot_GetCartesian.shutdown();
   handle_robot_SetWorkObject.shutdown();
   handle_robot_SetZone.shutdown();
@@ -141,6 +146,7 @@ void RobotComm::shutdown()
   handle_robot_SetDefaults.shutdown();
   handle_robot_GetIK.shutdown();
   handle_robot_GetFK.shutdown();
+  handle_robot_GetRobotAngle.shutdown();
   handle_robot_Approach.shutdown();
   handle_robot_ActivateEGM.shutdown();
   handle_robot_IOSignal.shutdown();
@@ -236,6 +242,40 @@ bool RobotComm::SetCartesianJ(const HomogTransf pose)
   Vec trans = pose.getTranslation();
   Quaternion quat = pose.getQuaternion();
   return SetCartesianJ(trans[0],trans[1],trans[2],quat[0],quat[1],quat[2],quat[3]);
+}
+
+bool RobotComm::SetCartesianA(const double x, const double y, const double z,
+    const double q0, const double qx, const double qy, const double qz, const double ang)
+{
+        robot_SetCartesianA_srv.request.x = x;
+        robot_SetCartesianA_srv.request.y = y;
+        robot_SetCartesianA_srv.request.z = z;
+        robot_SetCartesianA_srv.request.q0 = q0;
+        robot_SetCartesianA_srv.request.qx = qx;
+        robot_SetCartesianA_srv.request.qy = qy;
+        robot_SetCartesianA_srv.request.qz = qz;
+        robot_SetCartesianA_srv.request.ang = ang;
+        return handle_robot_SetCartesianA.call(robot_SetCartesianA_srv);
+}
+
+bool RobotComm::SetCartesianA(const double cart[8])
+{
+        robot_SetCartesianA_srv.request.x = cart[0];
+        robot_SetCartesianA_srv.request.y = cart[1];
+        robot_SetCartesianA_srv.request.z = cart[2];
+        robot_SetCartesianA_srv.request.q0 = cart[3];
+        robot_SetCartesianA_srv.request.qx = cart[4];
+        robot_SetCartesianA_srv.request.qy = cart[5];
+        robot_SetCartesianA_srv.request.qz = cart[6];
+        robot_SetCartesianA_srv.request.ang = cart[7];
+        return handle_robot_SetCartesianA.call(robot_SetCartesianA_srv);
+}
+
+bool RobotComm::SetCartesianA(const HomogTransf pose, const double ang)
+{
+  Vec trans = pose.getTranslation();
+  Quaternion quat = pose.getQuaternion();
+  return SetCartesianA(trans[0],trans[1],trans[2],quat[0],quat[1],quat[2],quat[3],ang);
 }
 
 bool RobotComm::SetJoints(const double j[7])
@@ -646,7 +686,12 @@ bool RobotComm::GetFK(const double joints[NUM_JOINTS], HomogTransf &pose)
   return false;
 }
 
-
+bool RobotComm::GetRobotAngle(double &angle)
+{
+  bool success = handle_robot_GetRobotAngle.call(robot_GetRobotAngle_srv);
+  angle = robot_GetRobotAngle_srv.response.angle;
+  return success;
+}
 
 bool RobotComm::moveArm(geometry_msgs::Pose pose)
 {
