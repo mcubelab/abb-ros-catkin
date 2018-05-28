@@ -1098,12 +1098,12 @@ SERVICE_CALLBACK_DEF(HandStop)
 
 SERVICE_CALLBACK_DEF(HandGripIn)
 {
-  return RUN_AND_RETURN_RESULT(handGripIn(), res.ret, res.msg, "Not able to grip hand in");
+  return RUN_AND_RETURN_RESULT(handGripIn(req.handForce), res.ret, res.msg, "ROBOT_CONTROLLER: Not able to grip hand in");
 }
 
 SERVICE_CALLBACK_DEF(HandGripOut)
 {
-  return RUN_AND_RETURN_RESULT(handGripOut(), res.ret, res.msg, "Not able to grip hand out");
+  return RUN_AND_RETURN_RESULT(handGripOut(req.handForce), res.ret, res.msg, "ROBOT_CONTROLLER: Not able to grip hand out");
 }
 
 SERVICE_CALLBACK_DEF(HandOnBlow)
@@ -1692,18 +1692,18 @@ bool RobotController::handStop()
 }
 
 // Grip In
-bool RobotController::handGripIn()
+bool RobotController::handGripIn(double handForce)
 {
   PREPARE_TO_TALK_TO_ROBOT
-  strcpy(message, ABBInterpreter::handGripIn(randNumber).c_str());
+  strcpy(message, ABBInterpreter::handGripIn(handForce, randNumber).c_str());
   SEND_MSG_TO_ROBOT_AND_END
 }
 
 // Grip Out
-bool RobotController::handGripOut()
+bool RobotController::handGripOut(double handForce)
 {
   PREPARE_TO_TALK_TO_ROBOT
-  strcpy(message, ABBInterpreter::handGripOut(randNumber).c_str());
+  strcpy(message, ABBInterpreter::handGripOut(handForce, randNumber).c_str());
   SEND_MSG_TO_ROBOT_AND_END
 }
 

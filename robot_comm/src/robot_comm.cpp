@@ -802,13 +802,15 @@ bool RobotComm::HandStop()
   return handle_robot_HandStop.call(robot_HandStop_srv);
 }
 
-bool RobotComm::HandGripIn()
+bool RobotComm::HandGripIn(const double handForce)
 {
+  robot_HandGripIn_srv.request.handForce = handForce;
   return handle_robot_HandGripIn.call(robot_HandGripIn_srv);
 }
 
-bool RobotComm::HandGripOut()
+bool RobotComm::HandGripOut(const double handForce)
 {
+  robot_HandGripOut_srv.request.handForce = handForce;
   return handle_robot_HandGripOut.call(robot_HandGripOut_srv);
 }
 

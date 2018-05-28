@@ -196,8 +196,6 @@ class RobotController
   bool handJogOut();
   bool handCalibrate();
   bool handStop();
-  bool handGripIn();
-  bool handGripOut();
   bool handOnBlow();
   bool handOffBlow();
   bool handOnVacuum();
@@ -327,6 +325,8 @@ class RobotController
   bool handMoveTo(double handPose);
   bool handSetForce(double handForce);
   bool handSetSpeed(double handSpeed);
+  bool handGripIn(double handForce);
+  bool handGripOut(double handForce);
   bool handGetPose(double &pose);
   bool handGetPressure(double &pressure);
   bool handIsCalibrated(double &handCalibrated);

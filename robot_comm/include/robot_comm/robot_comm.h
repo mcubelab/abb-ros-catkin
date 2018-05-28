@@ -188,8 +188,8 @@ class RobotComm
 
     bool HandJogIn();
     bool HandJogOut();
-    bool HandGripIn();
-    bool HandGripOut();
+    bool HandGripIn(const double handForce);
+    bool HandGripOut(const double handForce);
     bool HandOnBlow();
     bool HandOffBlow();
     bool HandOnVacuum();

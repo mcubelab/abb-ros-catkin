@@ -47,8 +47,8 @@ namespace ABBInterpreter
   string handJogOut(int idCode=0);
   string handStop(int idCode=0);
   string handCalibrate(int idCode=0);
-  string handGripIn(int idCode=0);
-  string handGripOut(int idCode=0);
+  string handGripIn(double handForce, int idCode=0);
+  string handGripOut(double handForce, int idCode=0);
   string handOnBlow(int idCode=0);
   string handOffBlow(int idCode=0);
   string handOnVacuum(int idCode=0);
