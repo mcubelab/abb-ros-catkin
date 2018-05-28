@@ -368,14 +368,18 @@ string ABBInterpreter::handGetPose(int idCode)
   return stringFromInstructionCode(24,idCode);
 }
 
-string ABBInterpreter::handGripIn(int idCode)
+string ABBInterpreter::handGripIn(double handForce, int idCode)
 {
-  return stringFromInstructionCode(25,idCode);
+  string msg = stringFromInstructionCodeNoEnding(25,idCode);
+  sprintf(buff,"%08.1lf ",handForce);  msg += buff ;
+  return (msg+"#");
 }
 
-string ABBInterpreter::handGripOut(int idCode)
+string ABBInterpreter::handGripOut(double handForce, int idCode)
 {
-  return stringFromInstructionCode(26,idCode);
+  string msg = stringFromInstructionCodeNoEnding(26,idCode);
+  sprintf(buff,"%08.1lf ",handForce);  msg += buff ;
+  return (msg+"#");
 }
 
 string ABBInterpreter::handOnBlow(int idCode)
