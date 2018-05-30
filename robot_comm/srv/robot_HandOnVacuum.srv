@@ -1,0 +1,5 @@
+#Service to turn on the vacuum1 of the Yumi Hand
+
+---
+int64 ret
+string msg

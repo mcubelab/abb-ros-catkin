@@ -8,6 +8,7 @@
 #include <robot_comm/robot_Ping.h>
 #include <robot_comm/robot_SetCartesian.h>
 #include <robot_comm/robot_SetCartesianJ.h>
+#include <robot_comm/robot_SetCartesianA.h>
 #include <robot_comm/robot_GetCartesian.h>
 #include <robot_comm/robot_SetWorkObject.h>
 #include <robot_comm/robot_SetZone.h>
@@ -26,6 +27,7 @@
 #include <robot_comm/robot_SetDefaults.h>
 #include <robot_comm/robot_GetIK.h>
 #include <robot_comm/robot_GetFK.h>
+#include <robot_comm/robot_GetRobotAngle.h>
 #include <robot_comm/robot_Approach.h>
 #include <robot_comm/robot_AddJointPosBuffer.h>
 #include <robot_comm/robot_ExecuteJointPosBuffer.h>
@@ -33,6 +35,23 @@
 #include <robot_comm/robot_AddBuffer.h>
 #include <robot_comm/robot_ExecuteBuffer.h>
 #include <robot_comm/robot_ClearBuffer.h>
+
+#include <robot_comm/robot_HandJogIn.h>
+#include <robot_comm/robot_HandJogOut.h>
+#include <robot_comm/robot_HandIsCalibrated.h>
+#include <robot_comm/robot_HandMoveTo.h>
+#include <robot_comm/robot_HandSetForce.h>
+#include <robot_comm/robot_HandSetSpeed.h>
+#include <robot_comm/robot_HandCalibrate.h>
+#include <robot_comm/robot_HandStop.h>
+#include <robot_comm/robot_HandGetPose.h>
+#include <robot_comm/robot_HandGripIn.h>
+#include <robot_comm/robot_HandGripOut.h>
+#include <robot_comm/robot_HandOnBlow.h>
+#include <robot_comm/robot_HandOffBlow.h>
+#include <robot_comm/robot_HandOnVacuum.h>
+#include <robot_comm/robot_HandOffVacuum.h>
+#include <robot_comm/robot_HandGetPressure.h>
 
 #include <robot_comm/robot_CartesianLog.h>
 #include <robot_comm/robot_JointsLog.h>
@@ -115,6 +134,10 @@ class RobotComm
     bool SetCartesianJ(const double cart[7]);
     bool SetCartesianJ(const double x, const double y, const double z, 
         const double q0, const double qx, const double qy, const double qz);
+    bool SetCartesianA(const HomogTransf pose, const double ang);
+    bool SetCartesianA(const double cart[8]);
+    bool SetCartesianA(const double x, const double y, const double z,
+        const double q0, const double qx, const double qy, const double qz, const double ang);
     bool SetJoints(const double j[NUM_JOINTS]); 
     bool SetJoints(const double j1, const double j2, const double j3, 
         const double j4, const double j5, const double j6, const double j7);
@@ -161,6 +184,24 @@ class RobotComm
 
     bool GetIK(const HomogTransf pose, double joints[NUM_JOINTS]);
     bool GetFK(const double joints[NUM_JOINTS], HomogTransf &pose);
+    bool GetRobotAngle(double &angle);
+
+    bool HandJogIn();
+    bool HandJogOut();
+    bool HandGripIn(const double handForce);
+    bool HandGripOut(const double handForce);
+    bool HandOnBlow();
+    bool HandOffBlow();
+    bool HandOnVacuum();
+    bool HandOffVacuum();
+    bool HandCalibrate();
+    bool HandStop();
+    bool HandIsCalibrated();
+    bool HandMoveTo(const double handPose);
+    bool HandSetForce(const double handForce);
+    bool HandSetSpeed(const double handSpeed);
+    bool HandGetPose(double &pose);
+    bool HandGetPressure(double &pressure);
 
     bool Approach(geometry_msgs::Pose pose);
     bool moveArm(geometry_msgs::Pose pose);
@@ -190,6 +231,7 @@ class RobotComm
     ros::ServiceClient handle_robot_Ping;
     ros::ServiceClient handle_robot_SetCartesian;
     ros::ServiceClient handle_robot_SetCartesianJ;
+    ros::ServiceClient handle_robot_SetCartesianA;
     ros::ServiceClient handle_robot_GetCartesian;
     ros::ServiceClient handle_robot_SetWorkObject;
     ros::ServiceClient handle_robot_SetZone;
@@ -207,9 +249,27 @@ class RobotComm
     ros::ServiceClient handle_robot_SetDefaults;
     ros::ServiceClient handle_robot_GetIK;
     ros::ServiceClient handle_robot_GetFK;
+    ros::ServiceClient handle_robot_GetRobotAngle;
     ros::ServiceClient handle_robot_Approach;
     ros::ServiceClient handle_robot_SetMotionSupervision;
     
+    ros::ServiceClient handle_robot_HandJogIn;
+    ros::ServiceClient handle_robot_HandJogOut;
+    ros::ServiceClient handle_robot_HandIsCalibrated;
+    ros::ServiceClient handle_robot_HandMoveTo;
+    ros::ServiceClient handle_robot_HandSetForce;
+    ros::ServiceClient handle_robot_HandSetSpeed;
+    ros::ServiceClient handle_robot_HandCalibrate;
+    ros::ServiceClient handle_robot_HandStop;
+    ros::ServiceClient handle_robot_HandGetPose;
+    ros::ServiceClient handle_robot_HandGripIn;
+    ros::ServiceClient handle_robot_HandGripOut;
+    ros::ServiceClient handle_robot_HandOnBlow;
+    ros::ServiceClient handle_robot_HandOffBlow;
+    ros::ServiceClient handle_robot_HandOnVacuum;
+    ros::ServiceClient handle_robot_HandOffVacuum;
+    ros::ServiceClient handle_robot_HandGetPressure;
+
     ros::ServiceClient handle_robot_AddJointPosBuffer;
     ros::ServiceClient handle_robot_ExecuteJointPosBuffer;
     ros::ServiceClient handle_robot_ClearJointPosBuffer;
@@ -224,6 +284,7 @@ class RobotComm
     robot_comm::robot_Ping robot_Ping_srv;
     robot_comm::robot_SetCartesian robot_SetCartesian_srv;
     robot_comm::robot_SetCartesianJ robot_SetCartesianJ_srv;
+    robot_comm::robot_SetCartesianA robot_SetCartesianA_srv;
     robot_comm::robot_GetCartesian robot_GetCartesian_srv;
     robot_comm::robot_SetWorkObject robot_SetWorkObject_srv;
     robot_comm::robot_SetZone robot_SetZone_srv;
@@ -242,8 +303,26 @@ class RobotComm
     robot_comm::robot_SetDefaults robot_SetDefaults_srv;
     robot_comm::robot_GetIK robot_GetIK_srv;
     robot_comm::robot_GetFK robot_GetFK_srv;
+    robot_comm::robot_GetRobotAngle robot_GetRobotAngle_srv;
     robot_comm::robot_Approach robot_Approach_srv;
     
+    robot_comm::robot_HandJogIn robot_HandJogIn_srv;
+    robot_comm::robot_HandJogOut robot_HandJogOut_srv;
+    robot_comm::robot_HandMoveTo robot_HandMoveTo_srv;
+    robot_comm::robot_HandSetForce robot_HandSetForce_srv;
+    robot_comm::robot_HandSetSpeed robot_HandSetSpeed_srv;
+    robot_comm::robot_HandIsCalibrated robot_HandIsCalibrated_srv;
+    robot_comm::robot_HandGetPose robot_HandGetPose_srv;
+    robot_comm::robot_HandCalibrate robot_HandCalibrate_srv;
+    robot_comm::robot_HandStop robot_HandStop_srv;
+    robot_comm::robot_HandGripIn robot_HandGripIn_srv;
+    robot_comm::robot_HandGripOut robot_HandGripOut_srv;
+    robot_comm::robot_HandOnBlow robot_HandOnBlow_srv;
+    robot_comm::robot_HandOffBlow robot_HandOffBlow_srv;
+    robot_comm::robot_HandOnVacuum robot_HandOnVacuum_srv;
+    robot_comm::robot_HandOffVacuum robot_HandOffVacuum_srv;
+    robot_comm::robot_HandGetPressure robot_HandGetPressure_srv;
+
     robot_comm::robot_AddJointPosBuffer robot_AddJointPosBuffer_srv;
     robot_comm::robot_ExecuteJointPosBuffer robot_ExecuteJointPosBuffer_srv;
     robot_comm::robot_ClearJointPosBuffer robot_ClearJointPosBuffer_srv;

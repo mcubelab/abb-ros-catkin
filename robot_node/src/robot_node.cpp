@@ -25,11 +25,13 @@ RobotController::~RobotController() {
   handle_robot_Ping.shutdown();
   handle_robot_SetCartesian.shutdown();
   handle_robot_SetCartesianJ.shutdown();
+  handle_robot_SetCartesianA.shutdown();
   handle_robot_GetCartesian.shutdown();
   handle_robot_SetJoints.shutdown();
   handle_robot_GetJoints.shutdown();
   handle_robot_GetIK.shutdown();
   handle_robot_GetFK.shutdown();
+  handle_robot_GetRobotAngle.shutdown();
   handle_robot_Stop.shutdown();
   handle_robot_SetTool.shutdown();
   handle_robot_SetInertia.shutdown();
@@ -46,6 +48,22 @@ RobotController::~RobotController() {
   handle_robot_DeactivateCSS.shutdown();
   handle_robot_ActivateEGM.shutdown();
   handle_robot_SetMotionSupervision.shutdown();
+  handle_robot_HandJogIn.shutdown();
+  handle_robot_HandJogOut.shutdown();
+  handle_robot_HandCalibrate.shutdown();
+  handle_robot_HandStop.shutdown();
+  handle_robot_HandMoveTo.shutdown();
+  handle_robot_HandSetForce.shutdown();
+  handle_robot_HandSetSpeed.shutdown();
+  handle_robot_HandGetPose.shutdown();
+  handle_robot_HandIsCalibrated.shutdown();
+  handle_robot_HandGetPressure.shutdown();
+  handle_robot_HandGripIn.shutdown();
+  handle_robot_HandGripOut.shutdown(); 
+  handle_robot_HandOnBlow.shutdown();
+  handle_robot_HandOffBlow.shutdown();
+  handle_robot_HandOnVacuum.shutdown();
+  handle_robot_HandOffVacuum.shutdown();
 
   // Shut down topics.
   handle_robot_CartesianLog.shutdown();
@@ -134,6 +152,8 @@ bool RobotController::init(std::string id)
   curP = Vec(3);
   curGoalP = Vec(3);
   curTargP = Vec(3);
+  curGoalAng = 0;
+  curTargAng = 0;
 
   // Set the Default Robot Configuration
   ROS_INFO("ROBOT_CONTROLLER: Setting robot default configuration...");
@@ -262,11 +282,13 @@ void RobotController::advertiseServices()
   INIT_HANDLE(Ping)
   INIT_HANDLE(SetCartesian)
   INIT_HANDLE(SetCartesianJ)
+  INIT_HANDLE(SetCartesianA)
   INIT_HANDLE(GetCartesian)
   INIT_HANDLE(SetJoints)
   INIT_HANDLE(GetJoints)
   INIT_HANDLE(GetIK)
   INIT_HANDLE(GetFK)
+  INIT_HANDLE(GetRobotAngle)
   INIT_HANDLE(Stop)
   INIT_HANDLE(SetTool)
   INIT_HANDLE(SetInertia)
@@ -288,7 +310,23 @@ void RobotController::advertiseServices()
   INIT_HANDLE(AddBuffer)
   INIT_HANDLE(ExecuteBuffer)
   INIT_HANDLE(ClearBuffer)
-      
+
+  INIT_HANDLE(HandJogIn)
+  INIT_HANDLE(HandJogOut)
+  INIT_HANDLE(HandCalibrate)
+  INIT_HANDLE(HandStop)
+  INIT_HANDLE(HandMoveTo)
+  INIT_HANDLE(HandSetForce)
+  INIT_HANDLE(HandSetSpeed)
+  INIT_HANDLE(HandGetPose)
+  INIT_HANDLE(HandIsCalibrated)
+  INIT_HANDLE(HandGetPressure)
+  INIT_HANDLE(HandGripIn)
+  INIT_HANDLE(HandGripOut)
+  INIT_HANDLE(HandOnBlow)
+  INIT_HANDLE(HandOffBlow)
+  INIT_HANDLE(HandOnVacuum)
+  INIT_HANDLE(HandOffVacuum) 
   // CSS
   INIT_HANDLE(ActivateCSS)
   INIT_HANDLE(DeactivateCSS)
@@ -416,6 +454,77 @@ SERVICE_CALLBACK_DEF(SetCartesianJ)
   {
     // If we are in blocking mode, simply execute the cartesian move
     if (!setCartesianJ(req.x, req.y, req.z, req.q0, req.qx, req.qy, req.qz))
+    {
+      res.ret = 0;
+      res.msg = "ROBOT_CONTROLLER: Not able to set cartesian coordinates ";
+      res.msg += "of the robot.";
+      return false;
+    }
+  }
+
+  res.ret = 1;
+  res.msg = "ROBOT_CONTROLLER: OK.";
+  return true;
+}
+
+// Moves the robot to a given cartesian position. If we are currently in
+// non-blocking mode, then we simply setup the move and let the non-blocking
+// thread handle the actual moving. If we are in blocking mode, we then 
+// communicate with the robot to execute the move.
+SERVICE_CALLBACK_DEF(SetCartesianA)
+{
+  // If we are in non-blocking mode
+  if (non_blocking)
+  {
+    // As we are changing some state variables, mutex this block to be sure
+    // we don't get unpredictable actions
+    pthread_mutex_lock(&nonBlockMutex);
+    if (!do_nb_move)
+    {
+      // If no move is currently being executed, we will now be doing
+      // a cartesian move.
+      cart_move = true;
+      cart_move_a = true;
+
+      // Our new target is simply the target passed by the user
+      setArrayFromScalars(curTargP, req.x, req.y, req.z);
+      setArrayFromScalars(curTargQ, req.q0, req.qx, req.qy, req.qz);
+      curTargAng = req.ang;
+
+      // The last goal in the non-blocking move is simply the current position
+      getCartesian(curGoalP[0], curGoalP[1], curGoalP[2],
+          curGoalQ[0], curGoalQ[1], curGoalQ[2], curGoalQ[3]);
+
+      // We are now ready to execute this non-blocking move
+      do_nb_move = true;
+    }
+    else if (cart_move)
+    {
+      cart_move_a = true;
+      // If we are currently doing a non-blocking cartesian move, we simply
+      // need to update our current target
+      setArrayFromScalars(curTargP, req.x, req.y, req.z);
+      setArrayFromScalars(curTargQ, req.q0, req.qx, req.qy, req.qz);
+      curTargAng = req.ang;
+
+      // Remember that we changed our target, again to maintain concurrency
+      targetChanged = true;
+    }
+    else
+    {
+      // If we are doing a non-blocking move, but it's a joint move,
+      // it would be much too dangerous to switch
+      res.ret = 0;
+      res.msg = "ROBOT_CONTROLLER: Can't do a cartesian move while doing a ";
+      res.msg += "non-blocking joint move!";
+      return false;
+    }
+    pthread_mutex_unlock(&nonBlockMutex);
+  }
+  else
+  {
+    // If we are in blocking mode, simply execute the cartesian move
+    if (!setCartesianA(req.x, req.y, req.z, req.q0, req.qx, req.qy, req.qz, req.ang))
     {
       res.ret = 0;
       res.msg = "ROBOT_CONTROLLER: Not able to set cartesian coordinates ";
@@ -913,6 +1022,12 @@ bool RobotController::setNonBlockSpeed(double tcp, double ori)
   return true;
 }
 
+SERVICE_CALLBACK_DEF(GetRobotAngle)
+{
+  return RUN_AND_RETURN_RESULT(getRobotAngle(res.angle), res.ret, res.msg, "ROBOT_CONTROLLER: Not able to get robot angle.");
+}
+
+
 // TCP Pose buffer commands
 SERVICE_CALLBACK_DEF(AddBuffer)
 {
@@ -961,6 +1076,85 @@ SERVICE_CALLBACK_DEF(ActivateEGM)
   return RUN_AND_RETURN_RESULT(actEGM(req), res.ret, res.msg, "Not able to activate EGM");
 }
 
+SERVICE_CALLBACK_DEF(HandJogIn)
+{
+  return RUN_AND_RETURN_RESULT(handJogIn(), res.ret, res.msg, "Not able to jog hand in");
+}
+
+SERVICE_CALLBACK_DEF(HandJogOut) 
+{
+  return RUN_AND_RETURN_RESULT(handJogOut(), res.ret, res.msg, "Not able to jog hand out");
+}
+
+SERVICE_CALLBACK_DEF(HandCalibrate)
+{
+  return RUN_AND_RETURN_RESULT(handCalibrate(), res.ret, res.msg, "Not able to calibrate the hand");
+}
+
+SERVICE_CALLBACK_DEF(HandStop)
+{
+  return RUN_AND_RETURN_RESULT(handStop(), res.ret, res.msg, "Not able to stop the hand");
+}
+
+SERVICE_CALLBACK_DEF(HandGripIn)
+{
+  return RUN_AND_RETURN_RESULT(handGripIn(req.handForce), res.ret, res.msg, "ROBOT_CONTROLLER: Not able to grip hand in");
+}
+
+SERVICE_CALLBACK_DEF(HandGripOut)
+{
+  return RUN_AND_RETURN_RESULT(handGripOut(req.handForce), res.ret, res.msg, "ROBOT_CONTROLLER: Not able to grip hand out");
+}
+
+SERVICE_CALLBACK_DEF(HandOnBlow)
+{
+  return RUN_AND_RETURN_RESULT(handOnBlow(), res.ret, res.msg, "Not able to turn on blow on hand");
+}
+
+SERVICE_CALLBACK_DEF(HandOffBlow)
+{
+  return RUN_AND_RETURN_RESULT(handOffBlow(), res.ret, res.msg, "Not able to turn off blow on hand");
+}
+
+SERVICE_CALLBACK_DEF(HandOnVacuum)
+{
+  return RUN_AND_RETURN_RESULT(handOnVacuum(), res.ret, res.msg, "Not able to turn on vacuum on hand");
+}
+
+SERVICE_CALLBACK_DEF(HandOffVacuum)
+{
+  return RUN_AND_RETURN_RESULT(handOffVacuum(), res.ret, res.msg, "Not able to turn off vacuum on hand");
+}
+
+SERVICE_CALLBACK_DEF(HandSetSpeed)
+{
+  return RUN_AND_RETURN_RESULT(handSetSpeed(req.handSpeed), res.ret, res.msg, "ROBOT_CONTROLLER: Not able to set robot hand speed.");
+}
+
+SERVICE_CALLBACK_DEF(HandSetForce)
+{
+  return RUN_AND_RETURN_RESULT(handSetForce(req.handForce), res.ret, res.msg, "ROBOT_CONTROLLER: Not able to set robot hand force.");
+}
+
+SERVICE_CALLBACK_DEF(HandMoveTo)
+{
+  return RUN_AND_RETURN_RESULT(handMoveTo(req.handPose), res.ret, res.msg, "ROBOT_CONTROLLER: Not able to set robot hand position.");
+}
+
+SERVICE_CALLBACK_DEF(HandGetPose)
+{
+  return RUN_AND_RETURN_RESULT(handGetPose(res.pose), res.ret, res.msg, "ROBOT_CONTROLLER: Not able to get the hand pose.");
+}
+
+SERVICE_CALLBACK_DEF(HandGetPressure)
+{
+  return RUN_AND_RETURN_RESULT(handGetPressure(res.pressure), res.ret, res.msg, "ROBOT_CONTROLLER: Not able to get the hand pressure.");
+}
+
+SERVICE_CALLBACK_DEF(HandIsCalibrated)
+{
+  return RUN_AND_RETURN_RESULT(handIsCalibrated(res.handCalibrated), res.ret, res.msg, "ROBOT_CONTROLLER: Not able to calibrate the hand.");
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // Internal methods that let us execute certain robot functions without using 
@@ -1010,7 +1204,7 @@ bool RobotController::setCartesianJ(double x, double y, double z,
 {
   PREPARE_TO_TALK_TO_ROBOT
 
-  strcpy(message, ABBInterpreter::setCartesianJ(x, y, z, q0, qx, qy, qz, 
+  strcpy(message, ABBInterpreter::setCartesianJ(x, y, z, q0, qx, qy, qz,
         randNumber).c_str());
 
   if (sendAndReceive(message, strlen(message), reply, randNumber))
@@ -1018,6 +1212,28 @@ bool RobotController::setCartesianJ(double x, double y, double z,
     // If this was successful, keep track of the last commanded position
     setArrayFromScalars(curGoalP, x,y,z);
     setArrayFromScalars(curGoalQ, q0,qx,qy,qz);
+    return true;
+  }
+  else
+    return false;
+}
+
+// Command the robot to move to a given cartesian position using a joint
+// move
+bool RobotController::setCartesianA(double x, double y, double z,
+    double q0, double qx, double qy, double qz, double ang)
+{
+  PREPARE_TO_TALK_TO_ROBOT
+
+  strcpy(message, ABBInterpreter::setCartesianA(x, y, z, q0, qx, qy, qz, ang,
+        randNumber).c_str());
+
+  if (sendAndReceive(message, strlen(message), reply, randNumber))
+  {
+    // If this was successful, keep track of the last commanded position
+    setArrayFromScalars(curGoalP, x,y,z);
+    setArrayFromScalars(curGoalQ, q0,qx,qy,qz);
+    curGoalAng = ang;
     return true;
   }
   else
@@ -1379,6 +1595,22 @@ bool RobotController::is_moving()
     return false;
 }
 
+// Query the robot angle
+bool RobotController::getRobotAngle(double &angle)
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::getRobotAngle(randNumber).c_str());
+
+  if(sendAndReceive(message, strlen(message), reply, randNumber))
+  {
+    // Get speed
+    ABBInterpreter::parseHandValue(reply, &angle);
+    return true;
+  }
+  else
+    return false;
+}
+
 // Send TCP pose trajectories to a buffer 1 at a time
 bool RobotController::addBuffer(double x, double y, double z, double q0, double qx, double qy, double qz)
 {
@@ -1426,6 +1658,161 @@ bool RobotController::clearJointPosBuffer()
   strcpy(message, ABBInterpreter::clearJointPosBuffer(randNumber).c_str());
   SEND_MSG_TO_ROBOT_AND_END
 }
+
+// Jog In
+bool RobotController::handJogIn()
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::handJogIn(randNumber).c_str());
+  SEND_MSG_TO_ROBOT_AND_END
+}
+
+// Jog Out
+bool RobotController::handJogOut()
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::handJogOut(randNumber).c_str());
+  SEND_MSG_TO_ROBOT_AND_END
+}
+
+// Hand Calibrate
+bool RobotController::handCalibrate()
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::handCalibrate(randNumber).c_str());
+  SEND_MSG_TO_ROBOT_AND_END
+}
+
+// Hand Stop
+bool RobotController::handStop()
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::handStop(randNumber).c_str());
+  SEND_MSG_TO_ROBOT_AND_END
+}
+
+// Grip In
+bool RobotController::handGripIn(double handForce)
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::handGripIn(handForce, randNumber).c_str());
+  SEND_MSG_TO_ROBOT_AND_END
+}
+
+// Grip Out
+bool RobotController::handGripOut(double handForce)
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::handGripOut(handForce, randNumber).c_str());
+  SEND_MSG_TO_ROBOT_AND_END
+}
+
+// Turn on blow
+bool RobotController::handOnBlow()
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::handOnBlow(randNumber).c_str());
+  SEND_MSG_TO_ROBOT_AND_END
+}
+
+// Turn off blow
+bool RobotController::handOffBlow()
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::handOffBlow(randNumber).c_str());
+  SEND_MSG_TO_ROBOT_AND_END
+}
+
+// Turn on vacuum
+bool RobotController::handOnVacuum()
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::handOnVacuum(randNumber).c_str());
+  SEND_MSG_TO_ROBOT_AND_END
+}
+  
+// Turn off vacuum
+bool RobotController::handOffVacuum()
+{ 
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::handOffVacuum(randNumber).c_str());
+  SEND_MSG_TO_ROBOT_AND_END
+}
+
+// Set the speed of robot hand
+bool RobotController::handSetSpeed(double handSpeed)
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::handSetSpeed(handSpeed,
+                                     randNumber).c_str());
+  SEND_MSG_TO_ROBOT_AND_END
+}
+
+// Set the force of robot hand
+bool RobotController::handSetForce(double handForce)
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::handSetForce(handForce,
+                                     randNumber).c_str());
+  SEND_MSG_TO_ROBOT_AND_END
+}
+
+// Move the robot hand to a particular position
+bool RobotController::handMoveTo(double handPose)
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::handMoveTo(handPose,
+                                     randNumber).c_str());
+  SEND_MSG_TO_ROBOT_AND_END
+}
+
+// Query the robot hand for the pose
+bool RobotController::handGetPose(double &pose)
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::handGetPose(randNumber).c_str());
+
+  if(sendAndReceive(message, strlen(message), reply, randNumber))
+  {
+    // Get speed
+    ABBInterpreter::parseHandValue(reply, &pose);
+    return true;
+  }
+  else
+    return false;
+}
+
+// Query the robot hand for the pressure
+bool RobotController::handGetPressure(double &pressure)
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::handGetPressure(randNumber).c_str());
+
+  if(sendAndReceive(message, strlen(message), reply, randNumber))
+  {
+    // Get speed
+    ABBInterpreter::parseHandValue(reply, &pressure);
+    return true;
+  }
+  else
+    return false;
+}
+
+// Query the robot hand for the pose
+bool RobotController::handIsCalibrated(double &handCalibrated)
+{
+  PREPARE_TO_TALK_TO_ROBOT
+  strcpy(message, ABBInterpreter::handIsCalibrated(randNumber).c_str());
+
+  if(sendAndReceive(message, strlen(message), reply, randNumber))
+  {
+    ABBInterpreter::parseHandValue(reply, &handCalibrated);
+    return true;
+  }
+  else
+    return false;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 // Cartesian Soft Servo
@@ -2173,6 +2560,7 @@ void *nonBlockMain(void *args)
         if (robot->cart_move_j)
         {
           // Now do the cartesian move towards our new goal
+          //TODO need the angle 
           if (!robot->setCartesianJ(newGoalV[0], newGoalV[1], newGoalV[2],
                 newGoalQ[0], newGoalQ[1], newGoalQ[2], newGoalQ[3]))
           {
@@ -2182,6 +2570,7 @@ void *nonBlockMain(void *args)
             pthread_mutex_unlock(&nonBlockMutex);
           }
         }
+        //TODO add elseif robot->cart_move_a
         else
         {
           // Now do the cartesian move towards our new goal

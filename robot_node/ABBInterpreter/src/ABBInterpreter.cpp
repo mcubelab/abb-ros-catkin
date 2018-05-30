@@ -67,8 +67,29 @@ string ABBInterpreter::setCartesianJ(double x, double y, double z, double q0, do
 {
   string msg = stringFromInstructionCodeNoEnding(1,idCode);
   sprintf(buff,"%+08.1lf %+08.1lf %+08.1lf %+08.5lf %+08.5lf %+08.5lf %+08.5lf ",x,y,z,q0,qx,qy,qz);  msg += buff ;
-  msg += "j #";
+  msg += "j j #";
   return (msg);
+}
+
+/**
+  * Formats message to set the cartesian coordinates of the ABB robot
+  * The coordinates are always with respect to the currently defined work object and tool.
+  * @param x X-coordinate of the robot.
+  * @param y Y-coordinate of the robot.
+  * @param z Z-coordinate of the robot.
+  * @param q0 First component of the orientation quaternion.
+  * @param qx Second component of the orientation quaternion.
+  * @param qy Third component of the orientation quaternion.
+  * @param qz Fourth component of the orientation quaternion.
+  * @param ang Set the robot angle
+  * @param idCode User code identifying the message. Will be sent back with the acknowledgement.
+  * @return String to be sent to ABB server.
+  */
+string ABBInterpreter::setCartesianA(double x, double y, double z, double q0, double qx, double qy, double qz, double ang, int idCode)
+{
+  string msg = stringFromInstructionCodeNoEnding(1,idCode);
+  sprintf(buff,"%+08.1lf %+08.1lf %+08.1lf %+08.5lf %+08.5lf %+08.5lf %+08.5lf %+08.1lf ",x,y,z,q0,qx,qy,qz,ang);  msg += buff ;
+  return (msg+"#");
 }
 
 /**
@@ -239,6 +260,11 @@ string ABBInterpreter::setZone(bool fine, double tcp_mm, double ori_mm, double o
   return (msg+"#");
 }
 
+string ABBInterpreter::getRobotAngle(int idCode)
+{
+  return stringFromInstructionCode(10,idCode);
+}
+
 string ABBInterpreter::addBuffer(double x, double y, double z, double q0, double qx, double qy, double qz, int idCode)
 {
   //appends single target to the buffer
@@ -289,6 +315,96 @@ string ABBInterpreter::connectRRI(int idCode)
 string ABBInterpreter::closeRRI(int idCode)
 {
   return stringFromInstructionCode(51,idCode);
+}
+
+string ABBInterpreter::handJogIn(int idCode)
+{
+  return stringFromInstructionCode(16,idCode);
+}
+
+string ABBInterpreter::handJogOut(int idCode)
+{
+  return stringFromInstructionCode(17,idCode);
+}
+
+string ABBInterpreter::handMoveTo(double handPose, int idCode)
+{
+  string msg = stringFromInstructionCodeNoEnding(18,idCode);
+  sprintf(buff,"%08.1lf ",handPose);  msg += buff ;
+  return (msg+"#");
+}
+
+string ABBInterpreter::handCalibrate(int idCode)
+{
+  return stringFromInstructionCode(19,idCode);
+}
+
+string ABBInterpreter::handStop(int idCode)
+{
+  return stringFromInstructionCode(20,idCode);
+}
+
+string ABBInterpreter::handSetSpeed(double handSpeed, int idCode)
+{
+  string msg = stringFromInstructionCodeNoEnding(21,idCode);
+  sprintf(buff,"%08.1lf ",handSpeed);  msg += buff ;
+  return (msg+"#");
+}
+
+string ABBInterpreter::handSetForce(double handForce, int idCode)
+{
+  string msg = stringFromInstructionCodeNoEnding(22,idCode);
+  sprintf(buff,"%08.1lf ",handForce);  msg += buff ;
+  return (msg+"#");
+}
+
+string ABBInterpreter::handIsCalibrated(int idCode)
+{
+  return stringFromInstructionCode(23,idCode);
+}
+
+string ABBInterpreter::handGetPose(int idCode)
+{
+  return stringFromInstructionCode(24,idCode);
+}
+
+string ABBInterpreter::handGripIn(double handForce, int idCode)
+{
+  string msg = stringFromInstructionCodeNoEnding(25,idCode);
+  sprintf(buff,"%08.1lf ",handForce);  msg += buff ;
+  return (msg+"#");
+}
+
+string ABBInterpreter::handGripOut(double handForce, int idCode)
+{
+  string msg = stringFromInstructionCodeNoEnding(26,idCode);
+  sprintf(buff,"%08.1lf ",handForce);  msg += buff ;
+  return (msg+"#");
+}
+
+string ABBInterpreter::handOnBlow(int idCode)
+{
+  return stringFromInstructionCode(41,idCode);
+}
+
+string ABBInterpreter::handOffBlow(int idCode)
+{
+  return stringFromInstructionCode(42, idCode);
+}
+
+string ABBInterpreter::handOnVacuum(int idCode)
+{
+  return stringFromInstructionCode(43,idCode);
+}
+
+string ABBInterpreter::handOffVacuum(int idCode)
+{
+  return stringFromInstructionCode(44, idCode);
+}
+
+string ABBInterpreter::handGetPressure(int idCode)
+{
+  return stringFromInstructionCode(45,idCode);
 }
 
 /**
@@ -427,6 +543,16 @@ int ABBInterpreter::parseJoints(std::string msg,  double *joint1,
 {
   int ok, idCode;
   sscanf(msg.c_str(),"%*d %d %d %*f %lf %lf %lf %lf %lf %lf %lf",&idCode,&ok,joint1,joint2,joint3,joint4,joint5,joint6,joint7);
+  if (ok)
+    return idCode;
+  else
+    return -1;
+}
+
+int ABBInterpreter::parseHandValue(std::string msg,  double *value)
+{
+  int ok, idCode;
+  sscanf(msg.c_str(),"%*d %d %d %*f %lf",&idCode,&ok,value);
   if (ok)
     return idCode;
   else

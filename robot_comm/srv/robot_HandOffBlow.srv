@@ -1,0 +1,5 @@
+#Service to turn off the blow1 of the Yumi Hand
+
+---
+int64 ret
+string msg

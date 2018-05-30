@@ -38,6 +38,7 @@ add_service_files(DIRECTORY srv FILES
     robot_SetAcc.srv
     robot_SetCartesian.srv
     robot_SetCartesianJ.srv
+    robot_SetCartesianA.srv
     robot_SetComm.srv
     robot_SetDefaults.srv
     robot_SetInertia.srv
@@ -50,6 +51,23 @@ add_service_files(DIRECTORY srv FILES
     robot_SetZone.srv
     robot_Stop.srv
     robot_IOSignal.srv
+    robot_HandJogIn.srv
+    robot_HandJogOut.srv
+    robot_HandIsCalibrated.srv
+    robot_HandMoveTo.srv
+    robot_HandSetForce.srv
+    robot_HandSetSpeed.srv
+    robot_HandCalibrate.srv
+    robot_HandStop.srv
+    robot_HandGetPose.srv
+    robot_HandGripIn.srv
+    robot_HandGripOut.srv
+    robot_HandOnBlow.srv
+    robot_HandOffBlow.srv
+    robot_HandOnVacuum.srv
+    robot_HandOffVacuum.srv
+    robot_HandGetPressure.srv
+    robot_GetRobotAngle.srv
 )
 
 
