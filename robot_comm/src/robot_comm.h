@@ -182,7 +182,7 @@ class RobotComm
     bool ExecuteBuffer();
     bool ClearBuffer();
 
-    bool GetIK(const HomogTransf pose, double joints[NUM_JOINTS]);
+    bool GetIK(const HomogTransf pose, double joints[NUM_JOINTS], double robotAngle);
     bool GetFK(const double joints[NUM_JOINTS], HomogTransf &pose);
     bool GetRobotAngle(double &angle);
 

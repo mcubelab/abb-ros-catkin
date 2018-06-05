@@ -700,7 +700,7 @@ SERVICE_CALLBACK_DEF(GetJoints)
 SERVICE_CALLBACK_DEF(GetIK)
 {
   PREPARE_TO_TALK_TO_ROBOT
-  strcpy(message, ABBInterpreter::getIK(req.x, req.y, req.z, req.q0, req.qx, req.qy, req.qz, 
+  strcpy(message, ABBInterpreter::getIK(req.x, req.y, req.z, req.q0, req.qx, req.qy, req.qz, req.robotAngle, 
         randNumber).c_str());
 
   if (sendAndReceive(message, strlen(message), reply, randNumber))

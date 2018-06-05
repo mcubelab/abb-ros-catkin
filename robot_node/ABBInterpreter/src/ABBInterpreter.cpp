@@ -110,10 +110,10 @@ string ABBInterpreter::setJoints(double joint1, double joint2, double joint3, do
   return (msg+"#");
 }
 
-string ABBInterpreter::getIK(double x, double y, double z, double q0, double qx, double qy, double qz, int idCode)
+string ABBInterpreter::getIK(double x, double y, double z, double q0, double qx, double qy, double qz, double robotAngle, int idCode)
 {
   string msg = stringFromInstructionCodeNoEnding(12,idCode);
-  sprintf(buff,"%+08.1lf %+08.1lf %+08.1lf %+08.5lf %+08.5lf %+08.5lf %+08.5lf ",x,y,z,q0,qx,qy,qz);  msg += buff ;
+  sprintf(buff,"%+08.1lf %+08.1lf %+08.1lf %+08.5lf %+08.5lf %+08.5lf %+08.5lf %+08.1lf ",x,y,z,q0,qx,qy,qz,robotAngle);  msg += buff ;
   return (msg+"#");
 }
 
