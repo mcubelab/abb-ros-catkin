@@ -75,6 +75,8 @@ namespace ABBInterpreter
       double *q0, double *qx, double *qy, double *qz);
   int parseJoints(string msg, double *joint1, double *joint2, 
       double *joint3, double *joint4, double *joint5, double *joint6, double *joint7);
+  int parseIK(string msg, double *joint1, double *joint2,
+      double *joint3, double *joint4, double *joint5, double *joint6, double *joint7, double *errorNum);
   int parseHandValue(string msg, double *value);  
 }
 #endif

@@ -635,7 +635,7 @@ bool RobotComm::GetJoints(double j[NUM_JOINTS])
 
 
 
-bool RobotComm::GetIK(const HomogTransf pose, double joints[NUM_JOINTS], double robotAngle)
+bool RobotComm::GetIK(const HomogTransf pose, double robotAngle, double joints[NUM_JOINTS], double &errorNum)
 {
   Vec trans = pose.getTranslation();
   Quaternion quat = pose.getRotation().getQuaternion();
@@ -656,6 +656,7 @@ bool RobotComm::GetIK(const HomogTransf pose, double joints[NUM_JOINTS], double 
     joints[4] = robot_GetIK_srv.response.j5;
     joints[5] = robot_GetIK_srv.response.j6;
     joints[6] = robot_GetIK_srv.response.j7;
+    errorNum = robot_GetIK_srv.response.errorNum;
     return true;
   }
   return false;

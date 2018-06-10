@@ -17,5 +17,6 @@ float64 j4
 float64 j5
 float64 j6
 float64 j7
+float64 errorNum
 int64 ret
 string msg

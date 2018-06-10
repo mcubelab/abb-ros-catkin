@@ -705,7 +705,7 @@ SERVICE_CALLBACK_DEF(GetIK)
 
   if (sendAndReceive(message, strlen(message), reply, randNumber))
   {
-    ABBInterpreter::parseJoints(reply, &res.j1, &res.j2, &res.j3, &res.j4, &res.j5, &res.j6, &res.j7);
+    ABBInterpreter::parseIK(reply, &res.j1, &res.j2, &res.j3, &res.j4, &res.j5, &res.j6, &res.j7, &res.errorNum);
     res.ret = 1;
     res.msg = "ROBOT_CONTROLLER: OK.";
     return true;

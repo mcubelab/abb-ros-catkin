@@ -549,6 +549,18 @@ int ABBInterpreter::parseJoints(std::string msg,  double *joint1,
     return -1;
 }
 
+int ABBInterpreter::parseIK(std::string msg,  double *joint1,
+    double *joint2, double *joint3, double *joint4,
+    double *joint5, double *joint6, double *joint7, double *errorNum)
+{
+  int ok, idCode;
+  sscanf(msg.c_str(),"%*d %d %d %*f %lf %lf %lf %lf %lf %lf %lf %lf",&idCode,&ok,joint1,joint2,joint3,joint4,joint5,joint6,joint7,errorNum);
+  if (ok)
+    return idCode;
+  else
+    return -1;
+}
+
 int ABBInterpreter::parseHandValue(std::string msg,  double *value)
 {
   int ok, idCode;
