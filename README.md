@@ -2,6 +2,9 @@
 
 ABB ROS node forked from MLab, customized for the dual arm 7-DOF Yumi robot. 
 
+## Robot Studio
+We interface through the robot with Robot Studio. Unless you plan to change the controller level code, you will not need to edit or develop at this level. Robot Studio can be downloaded from the ABB website at: http://new.abb.com/products/robotics/robotstudio/downloads. You only need the basic installation, which is free.
+
 ## Workspace Setup
 
 We have to set up a catkin workspace, clone the repo and build it. 
