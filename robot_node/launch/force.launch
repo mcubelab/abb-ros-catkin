@@ -1,0 +1,3 @@
+<launch>
+    <node pkg="netft_rdt_driver" type="netft_node" name="netft" output="screen" args="--address 192.168.1.3 --rate 100" ns="netft"/>
+</launch>
