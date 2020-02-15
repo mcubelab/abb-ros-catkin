@@ -1,6 +1,7 @@
 robot1: {speedORI: 10.0, speedTCP: 50.0, toolQ0: 1.0,
   toolQX: 0.0, toolQY: 0.0, toolQZ: 0.0, toolX: 0.0, toolY: 0.0,
-  toolZ: 0.0, 
+  toolZ: 150.0, # 135 to the center of the gelsight finger; 150 close to end of finger 
+  #~ toolZ: 100.0,
   
   toolMass: 0.262, 
   toolCGX: 7.8, toolCGY: 11.9, toolCGZ: 50.7, 
@@ -14,7 +15,7 @@ robot1: {speedORI: 10.0, speedTCP: 50.0, toolQ0: 1.0,
 
 robot2: {speedORI: 10.0, speedTCP: 50.0, toolQ0: 1.0,
   toolQX: 0.0, toolQY: 0.0, toolQZ: 0.0, toolX: 0.0, toolY: 0.0,
-  toolZ: 0.0, 
+  toolZ: 130.0, 
   
   toolMass: 0.262, 
   toolCGX: 7.8, toolCGY: 11.9, toolCGZ: 50.7, 

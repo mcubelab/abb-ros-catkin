@@ -486,7 +486,7 @@ string ABBInterpreter::actEGM(int idCode)
 string ABBInterpreter::iosignal(int outputNum, int signal, int idCode)
 {
   stringstream ss;
-  ss << "10 " //instruction code;
+  ss << "51 " //instruction code;
      << idCode << " " << outputNum << " " << signal << " #";
 
   return ss.str();
