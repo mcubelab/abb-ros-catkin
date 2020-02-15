@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<ProductSettings version="1.0">
+  <Products>
+    <Product name="RobotWare" version="6.06.0115" id="abb.robotics.robotware">
+      <Settings>
+        <Setting id="abb.robotics.robotware.options.contact_l" displayName="Contact L" robot="1" />
+        <Setting id="abb.robotics.robotware.options.leadthrough" displayName="Leadthrough" robot="1" />
+        <Setting id="abb.robotics.robotware.options.yumiabsaccrecovery" displayName="YuMi AbsAcc Recovery" robot="1" />
+        <Setting id="abb.robotics.robotware.base" displayName="RobotWare Base" robot="1" path="\RobotWare Base\RobotWare Base\System Options\" />
+        <Setting id="abb.robotics.robotware.languages.english" displayName="English" robot="1" path="\English\Default Language\System Options\" />
+        <Setting id="abb.robotics.robotware.options.devicenet.mssingle" displayName="709-1 DeviceNet Master/Slave" robot="1" path="\709-1 DeviceNet Master/Slave\Industrial Networks\System Options\" />
+        <Setting id="abb.robotics.robotware.options.absoluteaccuracy" displayName="603-1 Absolute Accuracy" robot="1" path="\603-1 Absolute Accuracy\Motion Performance\System Options\" />
+        <Setting id="abb.robotics.robotware.options.multimove.coordinated" displayName="604-1 MultiMove Coordinated" robot="1" path="\604-1 MultiMove Coordinated\Multimove Options\Motion Coordination\System Options\" />
+        <Setting id="abb.robotics.robotware.options.collisiondetection" displayName="613-1 Collision Detection" robot="1" path="\613-1 Collision Detection\Motion Supervision\System Options\" />
+        <Setting id="abb.robotics.robotware.options.pcinterface" displayName="616-1 PC Interface" robot="1" path="\616-1 PC Interface\Communication\System Options\" />
+        <Setting id="abb.robotics.robotware.options.multitasking" displayName="623-1 Multitasking" robot="1" path="\623-1 Multitasking\Engineering Tools\System Options\" />
+        <Setting id="abb.robotics.robotware.options.externallyguidedmotion" displayName="689-1 Externally Guided Motion (EGM)" robot="1" path="\689-1 Externally Guided Motion (EGM)\Engineering Tools\System Options\" />
+        <Setting id="abb.robotics.robotware.options.calhall" displayName="Hall Sensor Calibration" robot="1" />
+        <Setting id="abb.robotics.robotware.drivesystems.drive.dc7_24.du7_24.dm7_24" displayName="Drive System IRB 14000" robot="1" path="\Drive System IRB 14000\Drive System\Drive Module\" />
+        <Setting id="abb.robotics.robotware.robots.irb14000.0_5-0_5" displayName="IRB 14000-0.5/0.5" robot="1" path="\IRB 14000-0.5/0.5\IRB 14000\Robot\Robots\" />
+      </Settings>
+    </Product>
+    <Product name="SmartGripperV3" version="3.10.0000.01" id="open.smartgripperv3">
+      <Settings>
+        <Setting id="open.smartgripperv3.open.smartgripperv3" displayName="SmartGripperV3.1" robot="1" path="\SmartGripperV3.1\SmartGripperV3.1Group\SmartGripperV3.1Category\" />
+      </Settings>
+    </Product>
+    <Product name="StateMachine" version="1.00.0006.00" id="open.statemachine">
+      <Settings>
+        <Setting id="open.statemachine.description" displayName="StateMachine" robot="1" path="\StateMachine\StateMachine Group\StateMachine Category\" />
+      </Settings>
+    </Product>
+  </Products>
+</ProductSettings>

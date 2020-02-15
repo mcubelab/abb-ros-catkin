@@ -1,0 +1,72 @@
+#
+# Generated backup file, do not edit.
+#
+# Originally at: /hd0a/TEMP/backup.455406
+# 2020-02-16  07:45:27
+#
+>>SYSTEM_ID:
+INTERNAL_USE
+
+>>PRODUCTS_ID:
+RobotWare Version: 6.06.00.00
+SmartGripperV3 Version: 3.10.1
+StateMachine Version: 1.0
+
+  Contact L
+  Leadthrough
+  YuMi AbsAcc Recovery
+  RobotWare Base
+  English
+  709-1 DeviceNet Master/Slave
+  603-1 Absolute Accuracy
+  604-1 MultiMove Coordinated
+  613-1 Collision Detection
+  616-1 PC Interface
+  623-1 Multitasking
+  689-1 Externally Guided Motion (EGM)
+  Hall Sensor Calibration
+  Drive System IRB 14000
+  IRB 14000-0.5/0.5
+  SmartGripperV3.1
+  StateMachine
+
+>>HOME:
+All public files and directories
+
+>>SYSPAR:
+SYS.cfg
+PROC.cfg
+MMC.cfg
+EIO.cfg
+SIO.cfg
+MOC.cfg
+
+
+>>TASK1: (MTN_R,,)
+SYSMOD/user.sys @ 
+SYSMOD/LINKEDM.sys @ HIDDEN
+PROGMOD/MTN_R.mod @ 
+
+>>TASK2: (MTN_L,,)
+SYSMOD/user.sys @ 
+SYSMOD/LINKEDM.sys @ HIDDEN
+PROGMOD/MTN_L.mod @ 
+
+>>TASK3: (LOG_L,,)
+SYSMOD/user.sys @ 
+PROGMOD/LOG_L.mod @ 
+
+>>TASK4: (LOG_R,,)
+SYSMOD/user.sys @ 
+PROGMOD/LOG_R.mod @ 
+
+>>TASK5: (INF_L,,)
+SYSMOD/user.sys @ 
+PROGMOD/INF_L.mod @ 
+
+>>TASK6: (INF_R,,)
+SYSMOD/user.sys @ 
+PROGMOD/INF_R.mod @ 
+
+
+>>EOF:
